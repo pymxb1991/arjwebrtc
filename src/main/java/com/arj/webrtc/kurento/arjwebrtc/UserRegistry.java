@@ -33,22 +33,14 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 4.3.1
  */
 public class UserRegistry implements Serializable  {
-  /*@Value("${redis-websocket-channel}")
-  private String channel;*/
+
 
   /**
    * 配置日志
    */
   private final static Logger logger = LoggerFactory.getLogger(UserRegistry.class);
 
-  /*@Autowired
-  private RedisDao redisDao;*/
 
- /* @Autowired
-  StringRedisTemplate stringRedisTemplate;
-
-  public static ConcurrentHashMap<String, UserSession> usersByName = new ConcurrentHashMap<>();
-  public static ConcurrentHashMap<String, UserSession> usersBySessionId = new ConcurrentHashMap<>();*/
 
   private ConcurrentHashMap<String, UserSession> usersByName = new ConcurrentHashMap<>();
   private ConcurrentHashMap<String, UserSession> usersBySessionId = new ConcurrentHashMap<>();
@@ -57,14 +49,7 @@ public class UserRegistry implements Serializable  {
   public void register(UserSession user) {
     usersByName.put(user.getName(), user);
     usersBySessionId.put(user.getSession().getId(), user);
-/*
-    JSONObject message = new JSONObject();
-    message.put("name", user);
-    message.put("sessionId", user);*/
 
-   //用户注册的时候订阅 redis 消息
-    //stringRedisTemplate.convertAndSend(channel,user.getName());
-    //logger.info(user.getName() + "：用户信息已经订阅成功：即将响应监听事件");
   }
 
   public UserSession getByName(String name) {

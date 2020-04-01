@@ -177,9 +177,6 @@ public class CallHandler extends TextWebSocketHandler {
     String from = jsonMessage.get("from").getAsString();
     final UserSession calleer = registry.getByName(from);
     String to = calleer.getCallingTo();
-    log.debug("....................................................................................");
-    log.debug("....................................................................................");
-    log.debug("....................................................................................");
     if ("accept".equals(callResponse)) {
       log.debug("Accepted call from '{}' to '{}'", from, to);
 
