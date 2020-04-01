@@ -204,54 +204,22 @@ function startCommunication(message) {
 
 function incomingCall(message) {
 	console.log("7、incomingCall loading………… --------->",message.to);
-	/*if (callState != NO_CALL) {
-		console.log("7.1、incomingCall loading………… --------->",message.to);
-		var response = {
-			id : 'incomingCallResponse',
-			from : message.from,
-			callResponse : 'reject',
-			message : 'bussy'
-		};
-		return sendMessage(response);
-	}*/
-	console.log("7...1、incomingCall loading………… --------->",message.to);
-	//setCallState(PROCESSING_CALL);
-	/*if (confirm('User ' + message.from
-		+ ' is calling you. Do you accept the call?')) {*/
-		showSpinner(videoInput, videoOutput);
-		console.log("7...2、incomingCall loading………… --------->",message.to);
-		from = message.from;
-		var options = {
-			localVideo : videoInput,
-			remoteVideo : videoOutput,
-			onicecandidate : onIceCandidate,
-			onerror : onError
-		}
-		debugger
-		console.log("7...3、incomingCall loading………… --------->",message.to);
-		webRtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerSendrecv(options,
-			function(error) {
-				if (error) {
-					console.log("7...4、webRtcPeer error loading………… --------->",message.to);
-					return console.error(error);
-				}
-				debugger
-				console.log("7...5、webRtcPeer error loading………… --------->",message.to);
-				webRtcPeer.generateOffer(onOfferIncomingCall);
-			});
-
-	/*} else {
-		console.log("7.5、incomingCall loading………… --------->",message.to);
-		var response = {
-			id : 'incomingCallResponse',
-			from : message.from,
-			callResponse : 'reject',
-			message : 'user declined'
-		};
-		sendMessage(response);
-		stop();
-	}*/
-	console.log("7....6 incomingCall loading………… --------->",message.to);
+	showSpinner(videoInput, videoOutput);
+	from = message.from;
+	var options = {
+		localVideo : videoInput,
+		remoteVideo : videoOutput,
+		onicecandidate : onIceCandidate,
+		onerror : onError
+	}
+	webRtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerSendrecv(options,
+		function(error) {
+			if (error) {
+				return console.error(error);
+			}
+			debugger
+			webRtcPeer.generateOffer(onOfferIncomingCall);
+		});
 }
 
 /**
@@ -274,9 +242,6 @@ function onOfferIncomingCall(error, offerSdp) {
 }
 
 function register(userId) {
-	//param.callInfo = 'incomingCall'; //标识用户call 过;
-	debugger
-	//var name = userId ;// document.getElementById('name').value;
 	if (userId == '') {
 		window.alert('You must insert your user name');
 		return;
@@ -292,10 +257,7 @@ function register(userId) {
 
 function call() {
 	console.log("3、call loading………… --------->",param.userId);
-
-	//setCallState(PROCESSING_CALL);
 	showSpinner(videoInput, videoOutput);
-
 	var options = {
 		localVideo : videoInput,
 		remoteVideo : videoOutput,
