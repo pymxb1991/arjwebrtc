@@ -356,6 +356,7 @@ function sendMessage(message) {
 			ws.send(JSON.stringify(message));
 		}else{
 			alert("连接已经断开!!!")
+			window.close();
 		}
 	}, 4000);
 }
