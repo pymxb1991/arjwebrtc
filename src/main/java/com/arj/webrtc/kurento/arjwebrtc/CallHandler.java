@@ -97,6 +97,9 @@ public class CallHandler extends TextWebSocketHandler {
       case "incomingCallResponse":
         incomingCallResponse(user, jsonMessage);
         break;
+      case "incomingCallErrorResponse":
+        incomingCallErrorResponse(user, jsonMessage);
+        break;
       case "onIceCandidate": {
         JsonObject candidate = jsonMessage.get("candidate").getAsJsonObject();
         if (user != null) {
@@ -113,6 +116,25 @@ public class CallHandler extends TextWebSocketHandler {
       default:
         break;
     }
+  }
+
+  /**
+   * 被呼叫方没有视频，告知发起方
+   * @param callee
+   * @param jsonMessage
+   * @throws IOException
+   */
+  private void incomingCallErrorResponse(UserSession callee, JsonObject jsonMessage)throws IOException{
+    String to = jsonMessage.get("to").getAsString();
+    String from = jsonMessage.get("from").getAsString();
+    JsonObject response = new JsonObject();
+    response.addProperty("id", "incomingCallError");
+    response.addProperty("from", from);
+    response.addProperty("to", to);
+    response.addProperty("errorResponse", "NoDevice");
+    UserSession calleer = registry.getByName(from);
+    calleer.sendMessage(response);
+
   }
 
   private void handleErrorResponse(Throwable throwable, WebSocketSession session, String responseId)

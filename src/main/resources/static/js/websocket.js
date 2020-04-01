@@ -1,5 +1,5 @@
 
-
+var wsurl =  'wss://' + location.host + '/call';
 var lockReconnect = false;  //避免ws重复连接
 createWebSocket(wsurl);
 

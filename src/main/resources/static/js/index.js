@@ -115,6 +115,9 @@ ws.onmessage = function(message) {
 		console.info('Communication ended by remote peer');
 		stop(true);
 		break;
+	case 'incomingCallError':
+		incomingCallError();
+		break;
 	case 'iceCandidate':
 		webRtcPeer.addIceCandidate(parsedMessage.candidate, function(error) {
 			if (error)
@@ -215,9 +218,19 @@ function incomingCall(message) {
 	webRtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerSendrecv(options,
 		function(error) {
 			if (error) {
-				return console.error(error);
+				alert('没有发现设备，确认关闭窗口! ');
+				var response = {
+					id : 'incomingCallErrorResponse',
+					from : param.userId,
+					to : param.sendId,
+					errorResponse : 'NoDevice'
+				};
+				sendMessage(response);
+				setTimeout(function () {
+					window.close();
+				},5000);
+
 			}
-			debugger
 			webRtcPeer.generateOffer(onOfferIncomingCall);
 		});
 }
@@ -270,7 +283,7 @@ function call() {
 	webRtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerSendrecv(options,
 			function(error) {
 				if (error) {
-					return console.error(error);
+					return  console.error(error);
 				}
 				// 生成本地的SDP Offer
 				webRtcPeer.generateOffer(onOfferCall);
@@ -291,6 +304,12 @@ function onOfferCall(error, offerSdp) {
 	};
 	sendMessage(message);
 	console.log("4、onOfferCall offerSdp ………… --------- >");
+}
+
+function incomingCallError() {
+	alert("对方没有视频设备!");
+/*	stop(true);*/
+	window.close();
 }
 
 function stop(message) {
@@ -336,7 +355,7 @@ function sendMessage(message) {
 		if (ws.readyState===1) {
 			ws.send(JSON.stringify(message));
 		}else{
-			alert("websocket connect error !!!")
+			alert("连接已经断开!!!")
 		}
 	}, 4000);
 }
