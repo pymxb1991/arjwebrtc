@@ -85,7 +85,7 @@ window.onload = function() {
 	}
 
 }
-
+//设置onbeforeunload监听器，语意为关闭窗口前关掉 websocket
 window.onbeforeunload = function() {
 	ws.close();
 }
@@ -228,7 +228,7 @@ function incomingCall(message) {
 				sendMessage(response);
 				setTimeout(function () {
 					window.close();
-				},5000);
+				},4000);
 
 			}
 			webRtcPeer.generateOffer(onOfferIncomingCall);

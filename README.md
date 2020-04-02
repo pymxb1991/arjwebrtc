@@ -44,3 +44,30 @@
      * 增加异常逻辑  
      ``  1. 当被呼叫方没有视频时，给发起方提示：“对方没有视频”，并且也提示自己：“没有发现设备，确认关闭窗口”
      ``
+     
+# 视频Group-All请求逻辑分析
+   ### register() 
+1. 页面请求发起
+   ```javascript 1.5
+      var message = {
+          id : 'joinRoom',
+          name : name,
+          room : room,
+      } 
+   ```
+2. 后端执行 
+   1. ``joinRoom()`` 获取房间，然后加入；
+       ```java
+          Room room = roomManager.getRoom(roomName);
+          final UserSession user = room.join(name, session);
+       ```
+   2.  ``getRoom()`` 如果获取不到房间，则创建房间；
+         ```java
+        private final ConcurrentMap<String, Room> rooms = new ConcurrentHashMap<>();
+           if (room == null) {
+               log.debug("Room {} not existent. Will create now!", roomName);
+               room = new Room(roomName, kurento.createMediaPipeline());
+               rooms.put(roomName, room);
+           }
+          ```
+    3. 最后进行用户注册；
