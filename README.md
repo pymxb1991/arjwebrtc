@@ -46,7 +46,8 @@
      ``
      
 # 视频Group-All请求逻辑分析
-   ### register() 
+### register() 
+   
 1. 页面请求发起
    ```javascript 1.5
       var message = {
@@ -56,18 +57,25 @@
       } 
    ```
 2. 后端执行 
-   1. ``joinRoom()`` 获取房间，然后加入；
-       ```java
-          Room room = roomManager.getRoom(roomName);
-          final UserSession user = room.join(name, session);
-       ```
-   2.  ``getRoom()`` 如果获取不到房间，则创建房间；
-         ```java
-        private final ConcurrentMap<String, Room> rooms = new ConcurrentHashMap<>();
-           if (room == null) {
-               log.debug("Room {} not existent. Will create now!", roomName);
-               room = new Room(roomName, kurento.createMediaPipeline());
-               rooms.put(roomName, room);
-           }
-          ```
-    3. 最后进行用户注册；
+>  ``joinRoom()``   获取房间，然后加入 
+   ``` 
+      Room room = roomManager.getRoom(roomName);
+      final UserSession user = room.join(name, session);
+   ```   
+>>  ``getRoom()``   如果获取不到房间，则创建房间
+   ```
+    private final ConcurrentMap<String, Room> rooms = new ConcurrentHashMap<>();
+         if (room == null) {
+           log.debug("Room {} not existent. Will create now!", roomName);
+           room = new Room(roomName, kurento.createMediaPipeline());
+           rooms.put(roomName, room);
+         }
+   ```
+>>  ``join()``   用户加入房间
+
+    final UserSession participant = new UserSession(userName, this.name, session, this.pipeline);
+    joinRoom(participant);
+    participants.put(participant.getName(), participant);
+    sendParticipantNames(participant); 
+       
+   . 最后进行用户注册；
