@@ -15,7 +15,7 @@
  *
  */
 
-package com.arj.webrtc.kurento.arjwebrtc;
+package com.arj.webrtc.kurento.arjwebrtc.ptop;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

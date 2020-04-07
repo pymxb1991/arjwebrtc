@@ -15,7 +15,7 @@
  *
  */
 
-package com.arj.webrtc.kurento.arjwebrtc;
+package com.arj.webrtc.kurento.arjwebrtc.ptop;
 
 import org.kurento.client.KurentoClient;
 import org.kurento.client.MediaPipeline;

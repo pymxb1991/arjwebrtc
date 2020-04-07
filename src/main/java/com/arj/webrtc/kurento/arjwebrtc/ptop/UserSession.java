@@ -15,12 +15,9 @@
  *
  */
 
-package com.arj.webrtc.kurento.arjwebrtc;
+package com.arj.webrtc.kurento.arjwebrtc.ptop;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.gson.JsonObject;
 import org.kurento.client.IceCandidate;
 import org.kurento.client.WebRtcEndpoint;
 import org.slf4j.Logger;
@@ -28,7 +25,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
-import com.google.gson.JsonObject;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User session.

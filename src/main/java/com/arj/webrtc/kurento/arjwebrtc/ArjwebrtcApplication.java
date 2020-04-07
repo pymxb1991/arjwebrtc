@@ -1,6 +1,11 @@
 package com.arj.webrtc.kurento.arjwebrtc;
 
 import com.arj.webrtc.kurento.arjwebrtc.config.WebSocketInterceptor;
+import com.arj.webrtc.kurento.arjwebrtc.ptop.CallHandler;
+import com.arj.webrtc.kurento.arjwebrtc.ptop.UserRegistry;
+import com.arj.webrtc.kurento.arjwebrtc.room.GroupCallHandler;
+import com.arj.webrtc.kurento.arjwebrtc.room.GroupUserRegistry;
+import com.arj.webrtc.kurento.arjwebrtc.room.RoomManager;
 import org.kurento.client.KurentoClient;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,6 +23,7 @@ public class ArjwebrtcApplication  extends SpringBootServletInitializer implemen
         SpringApplication.run(ArjwebrtcApplication.class, args);
     }
 
+    /**************************/
     @Bean
     public CallHandler callHandler() {
         return new CallHandler();
@@ -28,6 +34,20 @@ public class ArjwebrtcApplication  extends SpringBootServletInitializer implemen
         return new UserRegistry();
     }
 
+    /**************************/
+    @Bean
+    public GroupCallHandler groupCallHandler() {
+        return new GroupCallHandler();
+    }
+
+    @Bean
+    public GroupUserRegistry GroupRegistry() {
+        return new GroupUserRegistry();
+    }
+    @Bean
+    public RoomManager roomManager() {
+        return new RoomManager();
+    }
     @Bean
     public KurentoClient kurentoClient() {
         // return KurentoClient.create("ws://95.169.9.32:8080/kurento");
@@ -36,7 +56,8 @@ public class ArjwebrtcApplication  extends SpringBootServletInitializer implemen
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(callHandler(), "/call").setAllowedOrigins("*").addInterceptors(new WebSocketInterceptor());
+         registry.addHandler(callHandler(), "/call").setAllowedOrigins("*").addInterceptors(new WebSocketInterceptor());
+         registry.addHandler(groupCallHandler(), "/groupcall").setAllowedOrigins("*").addInterceptors(new WebSocketInterceptor());
     }
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {

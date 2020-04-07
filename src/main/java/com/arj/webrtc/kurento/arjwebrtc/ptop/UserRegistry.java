@@ -15,7 +15,7 @@
  *
  */
 
-package com.arj.webrtc.kurento.arjwebrtc;
+package com.arj.webrtc.kurento.arjwebrtc.ptop;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
