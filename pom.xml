@@ -27,6 +27,8 @@
         <webrtc-adapter.version>6.1.0</webrtc-adapter.version>
         <kurento-client.version>6.10.0</kurento-client.version>
         <kurento-utils-js.version>6.7.0</kurento-utils-js.version>
+       <!-- <thymeleaf.version>3.0.9</thymeleaf.version>
+        <thymeleaf-layout-dialect.version>2.2.2</thymeleaf-layout-dialect.version>-->
     </properties>
 
     <dependencies>
@@ -66,7 +68,18 @@
             <artifactId>tomcat-embed-jasper</artifactId>
             <scope>provided</scope>
         </dependency>
+        <!--引入thymeleaf -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
 
+        <dependency>
+            <groupId>net.sourceforge.nekohtml</groupId>
+            <artifactId>nekohtml</artifactId>
+        </dependency>
+
+        <!--lombok 插件 -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -104,22 +117,26 @@
             <artifactId>fastjson</artifactId>
             <version>1.1.41</version>
         </dependency>
-        <!-- WebJars -->
+        <!-- WebJars  以 jar 包的方式引入静态资源 -->
+        <!-- WebJars  webjars-locator  版本号统一管理 依赖引入-->
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>webjars-locator</artifactId>
             <version>${webjars-locator.version}</version>
         </dependency>
+        <!-- WebJars  jquery 依赖引入-->
         <dependency>
             <groupId>org.webjars.bower</groupId>
             <artifactId>jquery</artifactId>
             <version>${jquery.version}</version>
         </dependency>
+        <!-- WebJars  bootstrap 依赖引入-->
         <dependency>
             <groupId>org.webjars.bower</groupId>
             <artifactId>bootstrap</artifactId>
             <version>${bootstrap.version}</version>
         </dependency>
+        <!-- WebJars  demo-console 依赖引入-->
         <dependency>
             <groupId>org.webjars.bower</groupId>
             <artifactId>demo-console</artifactId>
