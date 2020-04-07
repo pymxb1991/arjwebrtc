@@ -48,15 +48,16 @@
 # 视频Group-All请求逻辑分析
 ### register() 
    
-1. 页面请求发起加入
+1. 页面请求发起加入 ``register()``
    ```javascript 1.5
       var message = {
           id : 'joinRoom',
           name : name,
           room : room,
       } 
+   sendMessage(message);
    ```
-2. 后端执行 
+2. 后端核心处理器执行 
     - 1、 ``joinRoom()``   获取房间，然后加入 
        ``` 
           Room room = roomManager.getRoom(roomName);
@@ -94,6 +95,8 @@
            this.roomName = roomName;
            //WebRtc端点跟媒体管道绑定
            this.outgoingMedia = new WebRtcEndpoint.Builder(pipeline).build();
+           //绑定到当前用户中的其它WebRtc 端点
+           final ConcurrentMap<String, WebRtcEndpoint> incomingMedia = new ConcurrentHashMap<>();
            //监听ICE 事件
            this.outgoingMedia.addIceCandidateFoundListener(new EventListener<IceCandidateFoundEvent>() {}
            《iceCandidate回调》: session.sendMessage --》 iceCandidate
@@ -265,14 +268,14 @@
              ```
          -  2.3.3、 窗体对象内部方法
              ```javascript 1.5
-                function switchContainerClass() {}; //遍历所有元素，设置class
-                function isPresentMainParticipant() {};//当前窗口判断
+                function switchContainerClass() {}; //切换容器Container 的class 样式；
+                function isPresentMainParticipant() {};//是否有主窗口元素，是则返回true
              ```
          - 2.3.4、 窗体对象内部成员变量引用
              ```javascript 1.5
-                this.offerToReceiveVideo =function(error, offerSdp, wp){}; //SDB
+                this.offerToReceiveVideo =function(error, offerSdp, wp){}; //SDP
                 this.onIceCandidate = function (candidate, wp) {};//ICE
-                this.dispose = function() {}; //
+                this.dispose = function() {}; //释放
              ```
   -  3 离开房间
      -  3.1、页面执行`leaveRoom`
@@ -365,3 +368,21 @@
             </div>
         </div>
      ```
+
+### 整合room的视频需要做的事件
+  1. 了解``springboot`` 请求访问页面 方式
+        webjars 静态资源jar包方式加载
+  2. netty 端 点击视频时，如何进行控制“点对点” 还是“``Room``” 形式的视频； 
+        1、点击视频，是否可以知道是点对点，或是群聊；
+           点击联系人，弹出的页面只有自己，群聊的显示有多人；
+        2、如果可以区分，则进行传参来进行表明，视频发起是点对点，还是群聊
+        3、视频直接用Room形式的，舍弃点对点；
+  3. 核心处理器 ``handle`` 的整合
+        1、新建room文件夹，直接把Room,RoomManager 复制过来；
+        2、直接把Room中绑定了参与者列表，UserSession 信息，整合UserSession 实体
+            由于GroupAll UserSession中 直接监听了ICE ,监听到之后，直接构建返回；发送信息
+             而one to one 中通过响应来执行ICE 添加，把所有ICE  都与用户端点进行绑定
+        3、两种方式完全不一样，所以可以合并改造比较困难，非要改造，必须对些处非常了解；暂时不具备这个能力，坑有点大……
+            
+  4. 注意传参时，``id+name``
+  
