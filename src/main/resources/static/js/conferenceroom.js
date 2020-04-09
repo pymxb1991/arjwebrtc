@@ -18,7 +18,34 @@
 var ws = new WebSocket('wss://' + location.host + '/groupcall');
 var participants = {};
 var name;
+var param = {};
+window.onload = function() {
 
+	// 获取页面参数
+	getUrlParemeter();
+	name = param.userId;
+	//页面加载完毕之后直接获取用户房间进行注册,绑定房间
+	register(name,param.groupId);
+}
+/**
+ * 获取地址参数
+ */
+function getUrlParemeter() {
+	var url = location.search;
+	//var url = "?userId=1&sendId=6c5a486706574f7ebb3334e5ba6ecbb3&type=video";
+	//var url = "?userId=1&sendId=6c5a486706574f7ebb3334e5ba6ecbb3&type=video";
+	console.log("url-------->>>>>>>>>",url);
+	if(url.indexOf("?")!= -1){
+		var str = url.substr(1);
+		console.log("str-------->>>>>>>>>",str);
+		var strs = str.split("&");
+		console.log("strs-------->>>>>>>>>",strs);
+		for(var i = 0;i < strs.length; i++){
+			param[strs[i].split("=")[0]] = unescape(strs[i].split("=")[1]);
+			console.log("param["+strs[i].split("=")[0]+"]",unescape(strs[i].split("=")[1]));
+		}
+	}
+}
 window.onbeforeunload = function() {
 	ws.close();
 };
@@ -56,9 +83,9 @@ ws.onmessage = function(message) {
 	}
 }
 
-function register() {
-	name = document.getElementById('name').value;
-	var room = document.getElementById('roomName').value;
+function register(name,room) {
+	/*name = document.getElementById('name').value;
+	var room = document.getElementById('roomName').value;*/
 
 	document.getElementById('room-header').innerText = 'ROOM ' + room;
 	document.getElementById('join').style.display = 'none';
@@ -184,5 +211,8 @@ function onParticipantLeft(request) {
 function sendMessage(message) {
 	var jsonMessage = JSON.stringify(message);
 	console.log('Sending message: ' + jsonMessage);
-	ws.send(jsonMessage);
+	setTimeout(function () {
+		ws.send(jsonMessage);
+	},5000);
+
 }
