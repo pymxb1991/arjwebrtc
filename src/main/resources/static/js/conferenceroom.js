@@ -17,15 +17,23 @@
 
 var ws = new WebSocket('wss://' + location.host + '/groupcall');
 var participants = {};
+/**
+ * 用户ID
+ */
 var name;
+/**
+ * 用户名称
+ */
+var personName;
 var param = {};
 window.onload = function() {
 
 	// 获取页面参数
 	getUrlParemeter();
 	name = param.userId;
+	personName = param.userName;
 	//页面加载完毕之后直接获取用户房间进行注册,绑定房间
-	register(name,param.groupId);
+	register(name,personName,param.groupId);
 }
 /**
  * 获取地址参数
@@ -83,7 +91,7 @@ ws.onmessage = function(message) {
 	}
 }
 
-function register(name,room) {
+function register(name,personName,room) {
 	/*name = document.getElementById('name').value;
 	var room = document.getElementById('roomName').value;*/
 
@@ -94,6 +102,7 @@ function register(name,room) {
 	var message = {
 		id : 'joinRoom',
 		name : name,
+		personName : personName,
 		room : room,
 	}
 	sendMessage(message);
@@ -101,7 +110,8 @@ function register(name,room) {
 
 function onNewParticipant(request) {
 	console.log("onNewParticipant ---->>>> receiveVideo(request.name);");
-	receiveVideo(request.name);
+	console.log("onNewParticipant ---->>>> receiveVideo(request.name);",request.personName);
+	receiveVideo(request.name,request.personName);
 }
 
 function receiveVideoResponse(result) {
@@ -141,7 +151,7 @@ function onExistingParticipants(msg) {
 		}
 	};
 	console.log(name + " registered in room " + room);
-	var participant = new Participant(name);//窗体对象元素创建
+	var participant = new Participant(name,personName);//窗体对象元素创建
 	participants[name] = participant;//窗体对象赋值给当前用户
 	var video = participant.getVideoElement();
 
@@ -181,9 +191,9 @@ function leaveRoom() {
  * 建立远程视频元素来展示流
  * @param sender
  */
-function receiveVideo(sender) {
+function receiveVideo(sender,senderName) {
 	console.log("receiveVideo ---->>>>   ;");
-	var participant = new Participant(sender);
+	var participant = new Participant(sender,senderName);
 	participants[sender] = participant;
 	var video = participant.getVideoElement();
 

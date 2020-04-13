@@ -95,9 +95,9 @@ window.onbeforeunload = function() {
 var responseMsg ;
 ws.onmessage = function(message) {
 	var parsedMessage = JSON.parse(message.data);
-	console.info('Received message: ' + message.data);
+	/*console.info('Received message: ' + message.data);*/
 	responseMsg = parsedMessage.id;
-	console.log("iceCandidate-------------->: ",responseMsg);
+	/*console.log("iceCandidate-------------->: ",responseMsg);*/
 	switch (responseMsg) {
 	case 'registerResponse'://呼叫者回调
 		registerResponse(parsedMessage);
@@ -112,7 +112,7 @@ ws.onmessage = function(message) {
 		startCommunication(parsedMessage);
 		break;
 	case 'stopCommunication':
-		console.info('Communication ended by remote peer');
+		/*console.info('Communication ended by remote peer');*/
 		stop(true);
 		break;
 	case 'incomingCallError':
@@ -131,11 +131,11 @@ ws.onmessage = function(message) {
 //添加状态判断，当为OPEN时，发送消息
 
 ws.close = function(){
-	console.log("ws.close")
+	/*console.log("ws.close")*/
 	ws =  new WebSocket('wss://' + location.host + '/call');
 }
 ws.error = function () {
-	console.log("ws.error")
+	/*console.log("ws.error")*/
 	ws =  new WebSocket('wss://' + location.host + '/call');
 }
 /**
@@ -161,7 +161,7 @@ function getUrlParemeter() {
 function registerResponse(message) {
 	if (message.response == 'accepted') {
 		setRegisterState(REGISTERED);
-		console.log("2、register complete Response………… --------- > ",message.userId);
+		/*console.log("2、register complete Response………… --------- > ",message.userId);*/
 		if("caller" == param.callType){
 			call();
 		}
@@ -180,7 +180,7 @@ function registerResponse(message) {
  */
 function callResponse(message) {
 	if (message.response != 'accepted') {
-		console.info('Call not accepted by peer. Closing call');
+		/*console.info('Call not accepted by peer. Closing call');*/
 		var errorMessage = message.message ? message.message
 				: 'Unknown reason for call rejection.';
 		console.log(errorMessage);
@@ -196,17 +196,17 @@ function callResponse(message) {
 }
 
 function startCommunication(message) {
-	console.log("10、startCommunication loading………… --------->");
+	/*console.log("10、startCommunication loading………… --------->");*/
 	setCallState(IN_CALL);
 	webRtcPeer.processAnswer(message.sdpAnswer, function(error) {
 		if (error)
 			return console.error(error);
 	});
-	console.log("11、startCommunication complete………… --------->");
+	/*console.log("11、startCommunication complete………… --------->");*/
 }
 
 function incomingCall(message) {
-	console.log("7、incomingCall loading………… --------->",message.to);
+	/*console.log("7、incomingCall loading………… --------->",message.to);*/
 	showSpinner(videoInput, videoOutput);
 	from = message.from;
 	var options = {
@@ -241,7 +241,7 @@ function incomingCall(message) {
  * @param offerSdp
  */
 function onOfferIncomingCall(error, offerSdp) {
-	console.log("8、onOfferIncomingCall loading………… --------->");
+	/*console.log("8、onOfferIncomingCall loading………… --------->");*/
 	if (error)
 		return console.error("Error generenerating the offer");
 	var response = {
@@ -251,7 +251,7 @@ function onOfferIncomingCall(error, offerSdp) {
 		sdpOffer : offerSdp
 	};
 	sendMessage(response);
-	console.log("9、onOfferIncomingCall complete………… --------->");
+	/*console.log("9、onOfferIncomingCall complete………… --------->");*/
 }
 
 function register(userId) {
@@ -265,11 +265,11 @@ function register(userId) {
 		name : userId
 	};
 	sendMessage(message);
-	console.log("1、registering lodaing………… --------- > ",userId)
+	/*console.log("1、registering lodaing………… --------- > ",userId)*/
 }
 
 function call() {
-	console.log("3、call loading………… --------->",param.userId);
+	/*console.log("3、call loading………… --------->",param.userId);*/
 	showSpinner(videoInput, videoOutput);
 	var options = {
 		localVideo : videoInput,
@@ -293,7 +293,7 @@ function call() {
 function onOfferCall(error, offerSdp) {
 	if (error)
 		return console.error('Error generating the offer');
-	console.log('Invoking SDP offer callback function');
+/*	console.log('Invoking SDP offer callback function');*/
 
 	var message = {
 		id : 'call',
@@ -303,7 +303,7 @@ function onOfferCall(error, offerSdp) {
 		sdpOffer : offerSdp
 	};
 	sendMessage(message);
-	console.log("4、onOfferCall offerSdp ………… --------- >");
+	/*console.log("4、onOfferCall offerSdp ………… --------- >");*/
 }
 
 function incomingCallError() {
@@ -334,7 +334,7 @@ function onError() {
 }
 
 function onIceCandidate(candidate) {
-	console.log("5、onIceCandidate loading………… --------- >" + JSON.stringify(candidate));
+	/*console.log("5、onIceCandidate loading………… --------- >" + JSON.stringify(candidate));*/
 
 	var message = {
 		id : 'onIceCandidate',
@@ -343,7 +343,7 @@ function onIceCandidate(candidate) {
 	// 把本地candidate发送给Peer，基于Trickle ICE，也就是说，一旦发现一个候选，就立即发送
 	// 不等待所有候选收集成功，这样效率更高。此回调可能被调用多次
 	sendMessage(message);
-	console.log("6、onIceCandidate loading………… --------- >" + JSON.stringify(candidate));
+	/*console.log("6、onIceCandidate loading………… --------- >" + JSON.stringify(candidate));*/
 }
 
 /**

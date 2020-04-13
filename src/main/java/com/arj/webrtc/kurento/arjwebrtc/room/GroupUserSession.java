@@ -40,6 +40,7 @@ public class GroupUserSession implements Closeable {
   private static final Logger log = LoggerFactory.getLogger(GroupUserSession.class);
 
   private final String name;
+  private final String personName;
   private final WebSocketSession session;
 
   private final MediaPipeline pipeline;
@@ -53,12 +54,14 @@ public class GroupUserSession implements Closeable {
    * 然后上行传输的WebRtcEndPoint实例outgoingMedia又跟pipeline绑定 。
    * 这样："用户实例--pipeline实例--房间实例" 就串起来了。
    * @param name
+   * @param personName
    * @param roomName
    * @param session
    * @param pipeline
    */
-  public GroupUserSession(final String name, String roomName, final WebSocketSession session,
+  public GroupUserSession(final String name, String personName, String roomName, final WebSocketSession session,
                           MediaPipeline pipeline) {
+    this.personName = personName;
     log.info("UserSession ---->> UserSession {}: initi complate  ");
     this.pipeline = pipeline;
     this.name = name;
@@ -85,6 +88,10 @@ public class GroupUserSession implements Closeable {
         }
       }
     });
+  }
+
+  public String getPersonName() {
+    return personName;
   }
 
   public WebRtcEndpoint getOutgoingWebRtcPeer() {

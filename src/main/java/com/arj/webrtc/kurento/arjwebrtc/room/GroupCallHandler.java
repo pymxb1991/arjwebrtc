@@ -96,10 +96,11 @@ public class GroupCallHandler extends TextWebSocketHandler {
   private void joinRoom(JsonObject params, WebSocketSession session) throws IOException {
     final String roomName = params.get("room").getAsString();
     final String name = params.get("name").getAsString();
+    final String personName = params.get("personName").getAsString();
     log.info("joinRoom ---->> PARTICIPANT {}: trying to join room {}", name, roomName);
 
     Room room = roomManager.getRoom(roomName);
-    final GroupUserSession user = room.join(name, session);
+    final GroupUserSession user = room.join(name,personName, session);
     registry.register(user);
   }
 

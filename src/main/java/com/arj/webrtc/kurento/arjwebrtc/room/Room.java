@@ -70,10 +70,10 @@ public class Room implements Closeable { //实现 Closeable表示一种不再使
    * @return
    * @throws IOException
    */
-  public GroupUserSession join(String userName, WebSocketSession session) throws IOException {
+  public GroupUserSession join(String userName,String personName, WebSocketSession session) throws IOException {
     log.info("join ---->> ROOM {}: adding participant {}", userName, userName);
     //初始化 用户实例--pipeline实例--房间实例  进行关联
-    final GroupUserSession participant = new GroupUserSession(userName, this.name, session, this.pipeline);
+    final GroupUserSession participant = new GroupUserSession(userName, personName, this.name, session, this.pipeline);
 
     //一条信息是对于其它在房间中的用户通知他们有新的参与者，
     joinRoom(participant);
@@ -100,6 +100,7 @@ public class Room implements Closeable { //实现 Closeable表示一种不再使
     final JsonObject newParticipantMsg = new JsonObject();
     newParticipantMsg.addProperty("id", "newParticipantArrived"); //新人加入
     newParticipantMsg.addProperty("name", newParticipant.getName());
+    newParticipantMsg.addProperty("personName", newParticipant.getPersonName());
 
     final List<String> participantsList = new ArrayList<>(participants.values().size());
     log.debug("join ---->>  joinRoom {}: notifying other participants of new participant {}", name,

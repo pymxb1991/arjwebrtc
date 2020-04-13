@@ -26,7 +26,7 @@ const PARTICIPANT_CLASS = 'participant';
  *                        The tag of the new element will be 'video<name>'
  * @return
  */
-function Participant(name) {
+function Participant(name,personName) {
 	console.log("Participant ---->>>>   创建一个视频元素");
 
 	this.name = name;
@@ -43,7 +43,7 @@ function Participant(name) {
 	container.onclick = switchContainerClass;
 	document.getElementById('participants').appendChild(container);
 
-	span.appendChild(document.createTextNode(name));
+	span.appendChild(document.createTextNode(personName));
 
 	video.id = 'video-' + name;
 	video.autoplay = true;
