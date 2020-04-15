@@ -370,22 +370,182 @@
      ```
 
 #  遗留问题：
-   1. 单聊/群聊，点击发起 被接收方如果迟一些时间点接收，那么，发起方将收不到被接收方的回调消息； 
+   - 1. 单聊/群聊，点击发起 被接收方如果迟一些时间点接收，那么，发起方将收不到被接收方的回调消息； 
           此问题是由于浏览器拦截的原因，
-      解决方式：需要设置浏览器允许即可；
-   2. 视频，如果对方不再线，提示不能视频；
+         解决方式：需要设置浏览器允许即可；
+   - 2. 视频，如果对方不再线，提示不能视频；
           跟踪点击视频 obj.data.id 状态值问题{单聊：id代表值 ，群
           21聊状态值 ：}
-      解决方式：不在线的，提示msg 消息
-   3. 点击按钮，关闭正在连接中……
-      解决方式：直接在页面上增加点击事件，然后直接写隐藏事件；
-   4. 群聊用户拒绝的情况下，提示……
-      需要增加用户名，图片，然后获取IP和端口号
+         解决方式：不在线的，提示msg 消息
+   - 3. 点击按钮，关闭正在连接中……
+         解决方式：直接在页面上增加点击事件，然后直接写隐藏事件；
+   - 4. 群聊用户拒绝的情况下，提示……
+         需要增加用户名，图片，然后获取IP和端口号
+         解决方式：增加返回名称，提示：用户名+已经退出视频
    5. 单聊，手机视频时，手机视频画面太小
-   6. 视频时，对方如果关闭页面，需要发消息提示，用户已经即出视频；
+      解决方式：
+   - 6. 视频时，对方如果关闭页面，需要发消息提示，用户已经即出视频；
+        关闭窗口时，给好友发送消息即可；
+        解决方式：不处理，视频直接就可以告诉好友关页面了，所以没必要再次发消息提醒；
    7. IM视频聊天时，已经收到好友上线消息，同好友视频，提示好友不在线 
+      解决方式：判断条件有问题，直接拿缓存中用户判断即可；
    8. 群聊增加拉群功能： 赵酮 
           点击新增按钮，然后弹出所有人员列表，选中所要聊天的用户，确认进行添加名称
-   9. 视频页面图标
-   
-  
+   - 9. 视频页面图标
+         解决方式： 已经更换，错误原因，路径不对； 
+   - 10. 关闭页面时，后台提示“您的主机中的软件中止了一个已建立的连接”
+         解决方式：升级springboot tomcat 版本 2.1.6，
+   - 11. 群聊用户离开房间时，出现加入房间
+         解决方式：退出房间直接关闭窗口
+   - 12. 群聊被动方加入时，其它用户用户名称为 0
+         
+   - 13. synchronized 锁问题   
+             
+### netty 消息通信原理
+   1.  用户登陆
+      channelRead0  sessionId= null 
+      消息：msgType = 1 ()  //请求消息      inbound 
+       ```
+           通道设置心跳机制 
+           ctx.channel().attr(Constants.SessionConfig.SERVER_SESSION_HEARBEAT).set(System.currentTimeMillis());
+           //消息包装器，通过代理将消息转换包装 
+           MessageWrapper wrapper = proxy.convertToMessageWrapper(sessionId, message);
+           MessageProxyImpl 
+           message.getCmd() == 1 // 绑定  
+           // 实例化消息包装器 ：消息协议状态码，发送消息人员，接收消息人员，消息体：消息内容
+           return new MessageWrapper(MessageWrapper.MessageProtocol.CONNECT, message.getSender(), null, message);
+       ```
+       请求连接消息发送
+       receiveMessage()
+       ``` 
+          //消息连接
+          if (wrapper.isConnect()) {
+                 connertor.connect(hander, wrapper);
+              }
+        ```
+       消息连接：判断用户是否首次连接，否则获取重连信息发送
+       ```
+           	public void connect(ChannelHandlerContext ctx, MessageWrapper wrapper) {
+           		try {
+           			String sessionId = wrapper.getSessionId();
+           			String sessionId0 = getChannelSessionId(ctx);
+           			// 当sessionID存在或者相等 视为同一用户重新连接
+           			if (StringUtils.isNotEmpty(sessionId0) || sessionId.equals(sessionId0)) {
+                         // 获取重新连接状态消息 并发送出去写到session中
+           				pushMessage(proxy.getReConnectionStateMsg(sessionId0));
+           			} else {
+                    //如果是用户第一次连接
+           				sessionManager.createSession(wrapper, ctx);
+           				setChannelSessionId(ctx, sessionId);
+           			}
+           		} catch (Exception e) {
+           			log.error("connector connect  Exception.", e);
+           		}
+           	}
+       ```
+       获取重新连接状态消息， 更新消息包装器  Constants.CmdType.RECON //RECON = 6
+       ```
+        	public MessageWrapper getReConnectionStateMsg(String sessionId) {
+        		MessageProto.Model.Builder result = MessageProto.Model.newBuilder();
+        		result.setTimeStamp(DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss"));
+        		result.setSender(sessionId);// 存入发送人sessionId
+        		result.setCmd(Constants.CmdType.RECON);    // 重连
+        		return new MessageWrapper(MessageWrapper.MessageProtocol.SEND, sessionId, null, result.build());
+        	}       
+       ```
+       //当用户第一次连接的时候，设置session 
+       ``` 
+         private Session setSessionContent(ChannelHandlerContext ctx, MessageWrapper wrapper, String sessionId) {
+    		MessageProto.Model model = (MessageProto.Model) wrapper.getBody();
+    		Session session = new Session(ctx.channel());
+    		session.setAccount(sessionId);
+    		session.setSource(wrapper.getSource());
+    		session.setAppKey(model.getAppKey());
+    		session.setDeviceId(model.getDeviceId());
+    		session.setPlatform(model.getPlatform());
+    		session.setPlatformVersion(model.getPlatformVersion());
+    		session.setSign(model.getSign());
+    		session.setBindTime(System.currentTimeMillis());
+    		session.setUpdateTime(session.getBindTime());
+    		return session;
+    	}
+       ```
+       将当前登陆的用户加入到session中去，并群发出去，让人知道当前用户登陆；
+       ```
+        public synchronized void addSession(Session session) {
+                if (null == session) {
+                    return;
+                }
+                sessions.put(session.getAccount(), session);
+                 如果不是DWR标识，则将用户加入到Im广播组 中，用于群发
+                if (session.getSource() != Constants.ImserverConfig.DWR) {
+                    Im广播组 
+                    ImChannelGroup.add(session.getSession());
+                }
+                // 全员发送上线消息
+                MessageProto.Model model = proxy.getOnLineStateMsg(session.getAccount());
+                ImChannelGroup.broadcast(model);
+                DwrUtil.sedMessageToAll(model);
+                log.debug("put a session " + session.getAccount() + " to sessions!");
+                log.debug("session size " + sessions.size());
+            }
+       ```
+       如果不是DWR标识，则将用户加入到群组中，用于群发
+       ``` 
+         private static final ChannelGroup CHANNELGROUP = new DefaultChannelGroup("ChannelGroup", GlobalEventExecutor.INSTANCE);
+        
+         public static void add(Channel channel) {
+             CHANNELGROUP.add(channel);
+         }
+        ```
+       广播消息
+       ```
+            public static ChannelGroupFuture broadcast(Object msg) {
+                return CHANNELGROUP.writeAndFlush(msg);
+            }
+        ```
+       ```java
+       	public static interface ImserverConfig {
+       		// 连接空闲时间
+       		public static final int READ_IDLE_TIME = 60;// 秒
+       		// 发送心跳包循环时间
+       		public static final int WRITE_IDLE_TIME = 40;// 秒
+       		// 心跳响应 超时时间
+       		public static final int PING_TIME_OUT = 70; // 秒 需大于空闲时间
+       
+       		// 最大协议包长度
+       		public static final int MAX_FRAME_LENGTH = 1024 * 10; // 10k
+       		//
+       		public static final int MAX_AGGREGATED_CONTENT_LENGTH = 65536;
+       
+       		public static final String REBOT_SESSIONID = "0";// 机器人SessionID
+       
+       		public static final int WEBSOCKET = 1;// websocket标识
+       
+       		public static final int SOCKET = 0;// socket标识
+       
+       		public static final int DWR = 2;// dwr标识
+       
+       	}
+        public enum MessageProtocol {
+            CONNECT, CLOSE, HEART_BEAT, SEND, GROUP, NOTIFY, REPLY, ON_LINE, OFF_LINE
+        }
+        public static interface ProtobufType {
+            byte SEND = 1; // 请求
+            byte RECEIVE = 2; // 接收
+            byte NOTIFY = 3; // 通知
+            byte REPLY = 4; // 回复
+        }
+    
+        public static interface CmdType {
+            byte BIND = 1; // 绑定
+            byte HEARTBEAT = 2; // 心跳
+            byte ONLINE = 3; // 上线
+            byte OFFLINE = 4; // 下线
+            byte MESSAGE = 5; // 消息
+            byte RECON = 6; // 重连
+        }
+    ```
+       
+```
+     

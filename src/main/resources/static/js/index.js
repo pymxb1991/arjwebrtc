@@ -129,7 +129,10 @@ ws.onmessage = function(message) {
 	}
 }
 //添加状态判断，当为OPEN时，发送消息
+ws.onopen  = function(){
+	console.log("ws.onopening doing……")
 
+}
 ws.close = function(){
 	/*console.log("ws.close")*/
 	ws =  new WebSocket('wss://' + location.host + '/call');
@@ -358,7 +361,7 @@ function sendMessage(message) {
 			alert("连接已经断开!!!")
 			window.close();
 		}
-	}, 4000);
+	}, 3000);
 }
 
 function showSpinner() {
