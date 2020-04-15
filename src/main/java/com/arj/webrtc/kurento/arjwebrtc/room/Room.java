@@ -18,9 +18,7 @@
 package com.arj.webrtc.kurento.arjwebrtc.room;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import org.kurento.client.Continuation;
 import org.kurento.client.MediaPipeline;
 import org.slf4j.Logger;
@@ -159,16 +157,20 @@ public class Room implements Closeable { //实现 Closeable表示一种不再使
     final JsonArray participantsArray = new JsonArray();
     for (final GroupUserSession participant : this.getParticipants()) {
       if (!participant.equals(user)) {
-        final JsonElement participantName = new JsonPrimitive(participant.getName());
-        participantsArray.add(participantName);
+      //  final JsonElement participantName = new JsonPrimitive(participant.getName());
+        final JsonObject participantNameObj = new JsonObject();
+        participantNameObj.addProperty("name",participant.getName());
+        participantNameObj.addProperty("personName",participant.getPersonName());
+        participantsArray.add(participantNameObj);
       }
     }
 
     final JsonObject existingParticipantsMsg = new JsonObject();
     existingParticipantsMsg.addProperty("id", "existingParticipants");//其他人参与者
+    //existingParticipantsMsg.add("data", participantsArray);
     existingParticipantsMsg.add("data", participantsArray);
     log.debug("sendParticipantNames ---->> PARTICIPANT {}: sending a list of {} participants", user.getName(),
-        participantsArray.size());
+            participantsArray.size());
     user.sendMessage(existingParticipantsMsg);
   }
 
