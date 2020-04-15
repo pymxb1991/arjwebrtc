@@ -13,13 +13,13 @@ window.onload = function() {
 	name = param.userId;
 	personName = param.userName;
 	//页面加载完毕之后直接获取用户房间进行注册,绑定房间
-	register(name,personName,param.groupId);
+	register(name,personName,param.groupId,param.groupName);
 }
 /**
  * 获取地址参数
  */
 function getUrlParemeter() {
-	var url = location.search;
+	var url = decodeURI(location.search);
 	//var url = "?userId=1&sendId=6c5a486706574f7ebb3334e5ba6ecbb3&type=video";
 	//var url = "?userId=1&sendId=6c5a486706574f7ebb3334e5ba6ecbb3&type=video";
 	console.log("url-------->>>>>>>>>",url);
@@ -71,11 +71,11 @@ ws.onmessage = function(message) {
 	}
 }
 
-function register(name,personName,room) {
+function register(name,personName,room,groupName) {
 	/*name = document.getElementById('name').value;
 	var room = document.getElementById('roomName').value;*/
 
-	document.getElementById('room-header').innerText = 'ROOM ' + room;
+	document.getElementById('room-header').innerText = groupName;// 'ROOM ' + room;
 	document.getElementById('join').style.display = 'none';
 	document.getElementById('room').style.display = 'block';
 

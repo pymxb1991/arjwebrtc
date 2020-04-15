@@ -38,7 +38,7 @@
          ``由于本地网络问题导致，现场部署需要测试，关注延时时间，如果websocket 一直连接不上，
       可以调整时间长一些``
   4. 发起视频，没有任何反应，需要有一个提示： 正在呼叫中…… 提示
-     
+     解决方案：增加消息提示
   5. 接收方如果没有视频，程序会异常，发送方的视频也会看不到；
      * 已经解决
      * 增加异常逻辑  
@@ -110,7 +110,7 @@
            
             final List<String> participantsList = new ArrayList<>(participants.values().size());   
             for (final UserSession participant : participants.values()) {
-                participant.sendMessage(newParticipantMsg);
+                participant.sendMessage(newParticipantMsg); //在发起人页面初始化Video窗体
             }
              participantsList.add(participant.getName());
             《用户joinRoom回调》: session.sendMessage --》newParticipantArrived
@@ -399,8 +399,12 @@
          解决方式：退出房间直接关闭窗口
    - 12. 群聊被动方加入时，其它用户用户名称为 0
          
-   - 13. synchronized 锁问题   
-             
+   - 13. synchronized 锁问题
+   - 14. 房间名称问题，目前用的是ID;  
+         解决方式：弹出页面时，增加房间名称，decodeUrl 解析Url 乱码问题
+   - 15. 群聊视频视频源不创建问题，异常退出问题；偶然出现；
+         原因：不明；
+         解决方式：          
 ### netty 消息通信原理
    1.  用户登陆
       channelRead0  sessionId= null 
