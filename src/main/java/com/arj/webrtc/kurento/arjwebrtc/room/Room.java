@@ -75,8 +75,9 @@ public class Room implements Closeable { //实现 Closeable表示一种不再使
 
     //一条信息是对于其它在房间中的用户通知他们有新的参与者，
     joinRoom(participant);
-    participants.put(participant.getName(), participant);
+      participants.put(participant.getName(), participant);
     //另一条信息是对当前用户通知当前存在的参与者
+    //在加入成功后，给房间里的其它人发通知
     sendParticipantNames(participant);
     return participant;
   }

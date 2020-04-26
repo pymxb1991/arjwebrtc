@@ -1,39 +1,71 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="utf-8">
+<link rel="stylesheet"	href="webjars/bootstrap/dist/css/bootstrap.min.css">
+<link rel="styleSheet" href="iconfont/iconfont.css" type="text/css" media="screen">
 <link rel="styleSheet" href="css/style.css" type="text/css" media="screen">
-
+<script src="/webjars/jquery/dist/jquery.min.js"></script>
+<script src="webjars/bootstrap/dist/js/bootstrap.min.js"></script>
 <script src="/webjars/webrtc-adapter/release/adapter.js"></script>
+<script src="./iconfont/iconfont.js"></script>
 <script src="./js/conferenceroom.js"></script>
 <script src="./js/participant.js"></script>
+
 <script src="./js/kurento-utils.js"></script>
+<style>
+
+</style>
 </head>
 <body>
 	<div id="container">
-		<div id="wrapper">
-			<div id="join" class="animate join" display="none">
+
+		<div id="wrapper"  display="none">
+			<div id="join" class="animate join">
 				<h1>Join a Room</h1>
 				<form onsubmit="register(); return false;" accept-charset="UTF-8">
 					<p>
-						<input type="text" name="name" value=${userId} id="name"
-							placeholder="Username" required>
+						<input type="text" name="name" value=${userId} id="name" required >
 					</p>
 					<p>
-						<input type="text" name="room" value=${groupId} id="roomName"
-							placeholder="Room" required>
+						<input type="text" name="room" value=${groupId} id="roomName" required >
 					</p>
 					<p class="submit">
-						<input type="submit" name="commit" value="Join!">
+						<input type="submit" name="commit" value="Join!" display="none">
 					</p>
 				</form>
 			</div>
+
 			<div id="room" style="display: none;">
 				<h2 id="room-header"></h2>
-				<div id="participants"></div>
-				<input type="button" id="button-leave" onmouseup="leaveRoom();"
-					value="Leave room">
+				<div class="container video-area">
+					<div id="participants" class="clearfix"></div>
+				</div>
+				<div class="room-footer">
+					<ul class="clearfix">
+						<li>
+							<a class="operationButton" id="aaa" onmouseup="closeVideo()">
+								<i class="iconfont iconshipingjinzhi-copy"></i>
+							</a>
+							<p class="text">关闭视频</p>
+						</li>
+						<li>
+							<a class="operationButton" id="bbb" onmouseup="silentMode()">
+								<i class="iconfont iconjingyin"></i>
+							</a>
+							<p class="text">静音</p>
+						</li>
+						<li>
+							<a class="operationButton" id="button-leave" onmouseup="leaveRoom()">
+								<i class="iconfont icontuichu"></i>
+							</a>
+							<p class="text">退出</p>
+						</li>
+					</ul>
+				</div>
 			</div>
 		</div>
+
 	</div>
+	<script src="./js/modifystylecss.js"></script>
 </body>
 </html>

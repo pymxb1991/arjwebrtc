@@ -17,6 +17,9 @@
 
 package com.arj.webrtc.kurento.arjwebrtc.room;
 
+import com.alibaba.fastjson.JSONObject;
+import com.arj.webrtc.kurento.arjwebrtc.room.entity.RoomUserRel;
+import com.arj.webrtc.kurento.arjwebrtc.util.Tool;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -91,6 +94,7 @@ public class GroupCallHandler extends TextWebSocketHandler {
   public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
     GroupUserSession user = registry.removeBySession(session);
     roomManager.getRoom(user.getRoomName()).leave(user);
+    updateRoomUserInfo( user.getName(), user.getPersonName(), user.getRoomName(), "del");
   }
 
   private void joinRoom(JsonObject params, WebSocketSession session) throws IOException {
@@ -102,13 +106,36 @@ public class GroupCallHandler extends TextWebSocketHandler {
     Room room = roomManager.getRoom(roomName);
     final GroupUserSession user = room.join(name,personName, session);
     registry.register(user);
+    updateRoomUserInfo( name, personName, roomName, "add");
+
   }
 
   private void leaveRoom(GroupUserSession user) throws IOException {
     final Room room = roomManager.getRoom(user.getRoomName());
+    updateRoomUserInfo( user.getName(),user.getPersonName(),  user.getRoomName(), "del");
     room.leave(user);
     if (room.getParticipants().isEmpty()) {
       roomManager.removeRoom(room);
     }
+  }
+  private String updateRoomUserInfo(String userId,String userName, String roomId,String method) throws IOException {
+
+    String url ="";
+    if("add".equals(method)){
+      url = "http://192.168.1.238:8081/arjccm/app/rest/ImChat/saveUserGroupRel";
+    }else{
+      url = "http://192.168.1.238:8081/arjccm/app/rest/ImChat/deleteUserGroupRel";
+    }
+
+    RoomUserRel userRel = new RoomUserRel(roomId,userId);
+    String s1 = JSONObject.toJSONString(userRel);
+    String ret = Tool.sendPost(url, s1);
+    JSONObject resJson = JSONObject.parseObject(ret);
+    String retCode = resJson.getString("result");
+    String msg = "add".equals(method) ? "进入房间记录日志" :"离开房间记录日志";
+    if("1".equals(retCode)) {
+      log.info(userName +"："+msg);
+    }
+    return ret;
   }
 }

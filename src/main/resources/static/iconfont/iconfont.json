@@ -1,0 +1,30 @@
+{
+  "id": "1777905",
+  "name": "群聊图标",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "1463276",
+      "name": "关闭视频",
+      "font_class": "shipingjinzhi-copy",
+      "unicode": "e62a",
+      "unicode_decimal": 58922
+    },
+    {
+      "icon_id": "7162362",
+      "name": "静音",
+      "font_class": "jingyin",
+      "unicode": "e747",
+      "unicode_decimal": 59207
+    },
+    {
+      "icon_id": "7964510",
+      "name": "退出",
+      "font_class": "tuichu",
+      "unicode": "e630",
+      "unicode_decimal": 58928
+    }
+  ]
+}

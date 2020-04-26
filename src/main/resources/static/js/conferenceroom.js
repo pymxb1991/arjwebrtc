@@ -6,6 +6,7 @@ var name;
 /* 用户名称 */
 var personName;
 var param = {};
+var audioFlag = true;
 window.onload = function() {
 
 	// 获取页面参数
@@ -35,8 +36,13 @@ function getUrlParemeter() {
 	}
 }
 window.onbeforeunload = function() {
+	sendMessage({
+		id : 'leaveRoom'
+		//userId: $('.participant.main').getAttribute('id')
+	});
 	ws.close();
 };
+
 
 ws.onmessage = function(message) {
 	var parsedMessage = JSON.parse(message.data);
@@ -123,15 +129,20 @@ function onExistingParticipants(msg) {
 	var constraints = {
 		audio : true,
 		video : {
-			mandatory : {
-				maxWidth : 320,
-				maxFrameRate : 15,
-				minFrameRate : 15
-			}
+			 mandatory : {
+			 	maxWidth : 320,
+				 maxHeight : 240,
+			 	maxFrameRate : 15,
+			 	minFrameRate : 15
+			 },
+			// width:640,
+			// height:480,
+			//framerate : 15
 		}
 	};
 	console.log(name + " registered in room " + room);
 	var participant = new Participant(name,personName);//窗体对象元素创建
+
 	participants[name] = participant;//窗体对象赋值给当前用户
 	var video = participant.getVideoElement();
 
@@ -162,12 +173,24 @@ function leaveRoom() {
 	for ( var key in participants) {
 		participants[key].dispose();
 	}
-
-	/*document.getElementById('join').style.display = 'block';
-	document.getElementById('room').style.display = 'none';*/
-
 	ws.close();
 	window.close();
+}
+//静音功能
+function silentMode() {
+	if(audioFlag){
+		audioFlag = false;
+	}else{
+		audioFlag = true;
+	}
+}
+//关闭视频功能
+function closeVideo() {
+	if(audioFlag){
+		audioFlag = false;
+	}else{
+		audioFlag = true;
+	}
 }
 
 /**
@@ -179,9 +202,17 @@ function receiveVideo(sender,senderName) {
 	var participant = new Participant(sender,senderName);
 	participants[sender] = participant;
 	var video = participant.getVideoElement();
-
+	var constraints = {
+		audio : true,
+		video : {
+			width:640,
+			height:480,
+			framerate : 15
+		}
+	};
 	var options = {
       remoteVideo: video,
+		mediaConstraints: constraints,
       onicecandidate: participant.onIceCandidate.bind(participant)
     }
 
@@ -199,13 +230,69 @@ function onParticipantLeft(request) {
 	var participant = participants[request.name];
 	participant.dispose();
 	delete participants[request.name];
+	var len = $("#participants .participant").length
+	console.log(len)
+	if(len<=1){
+		$("#participants .participant.main").css({
+			"width":"100%",
+			"height":"auto",
+
+		})
+	}else if(len<=2){
+		$("#participants .participant").css({
+			"width":"100%"
+			// "height":"100%"
+
+		})
+		$("#participants .participant.main").css({
+			"width":"20%",
+			"height":"20%",
+			"position":"absolute",
+			"right":"10px",
+			"top":"10px",
+			"zIndex":"10"
+		})
+	}else if(len<=4 && len>2){
+		$("#participants .participant").css({
+			"width":"calc(50% - 16px)",
+			"height":"auto",
+			"marginRight":"16px",
+			"marginBottom":"16px"
+		})
+		$("#participants .participant.main").css({
+			"position":"sticky",
+		})
+	}else if(len<=6 && len>4){
+		$("#participants .participant").css({
+			"width":"calc(33.3333% - 16px)",
+			// "height":"calc(50% - 16px)",
+			"marginRight":"16px",
+			"marginBottom":"16px"
+
+		})
+		$("#participants .participant.main").css({
+			"position":"sticky",
+		})
+	}else if(len<=9 && len>6){
+		$("#participants .participant").css({
+			"width":"calc(33.3333% - 16px)",
+			// "height":"calc(33.3333% - 16px)",
+			"marginRight":"16px",
+			"marginBottom":"16px"
+		})
+		$("#participants .participant.main").css({
+			"position":"sticky",
+		})
+	}
+
 }
 
 function sendMessage(message) {
 	var jsonMessage = JSON.stringify(message);
 	console.log('Sending message: ' + jsonMessage);
-	setTimeout(function () {
-		ws.send(jsonMessage);
-	},5000);
+	ws.send(jsonMessage);
+	/*setTimeout(function () {
+
+	},5000);*/
 
 }

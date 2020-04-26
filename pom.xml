@@ -32,6 +32,12 @@
     </properties>
 
     <dependencies>
+        <!-- springboot 配置元数据支持-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
         <!--junit -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -56,6 +62,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
         <!-- tomcat -->
         <dependency>
             <!--添加springboot-tomcat scope必须时 provided-->
@@ -174,6 +181,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.61</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

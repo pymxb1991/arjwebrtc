@@ -53,7 +53,7 @@ public class ArjwebrtcApplication  extends SpringBootServletInitializer implemen
     @Bean
     public KurentoClient kurentoClient() {
         // return KurentoClient.create("ws://95.169.9.32:8080/kurento");
-        return KurentoClient.create("ws://192.168.1.229:8888/kurento");
+        return KurentoClient.create("ws://192.168.1.16:8888/kurento");
     }
 
     @Override

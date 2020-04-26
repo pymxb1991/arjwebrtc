@@ -47,8 +47,22 @@
      
 # 视频Group-All请求逻辑分析
 ### register() 
+1、创建房间入口
+2、创建用户实例入口 ：用户实例--pipeline实例--房间实例" 就串起来
+3、sendParticipantNames在加入成功后，给房间里的其它人发通知
+   sendParticipantNames后，会给js发送各种消息，
+   existingParticipants(其它人加入)、
+   newParticipantArrived(新人加入) 这二类消息，就会触发generateOffer，开始向服务端发送SDP
+4、SDP交换的入口 conferenceroom.js 中有一段监听websocke
+   ws.onmessage = function (message) {}
+5、服务端回应各种websocket消息
+   handleTextMessage();
+   其中user.receiveVideoFrom方法，就会回应SDP
+   SDP和ICE信息交换完成，就开始视频通讯了
+6、
+7、
    
-1. 页面请求发起加入 ``register()``
+1. 创建房间入口 ``register()``
    ```javascript 1.5
       var message = {
           id : 'joinRoom',
@@ -68,6 +82,7 @@
        ```
         private final ConcurrentMap<String, Room> rooms = new ConcurrentHashMap<>();
              if (room == null) {
+               每个房间实例创建时，都绑定了一个对应的MediaPipeline（用于隔离不同房间的媒体信息等）
                room = new Room(roomName, kurento.createMediaPipeline());
                rooms.put(roomName, room);
              }
@@ -93,6 +108,7 @@
            this.name = name;
            this.session = session;
            this.roomName = roomName;
+           //，把房间实例的pipeline做为入参传进来，然后上行传输的WebRtcEndPoint实例outgoingMedia又跟pipeline绑定
            //WebRtc端点跟媒体管道绑定
            this.outgoingMedia = new WebRtcEndpoint.Builder(pipeline).build();
            //绑定到当前用户中的其它WebRtc 端点
@@ -117,7 +133,7 @@
         ```
     - 4、将当前用户加入到`全局`参与者用户列表中；
         `participants.put(participant.getName(), participant);`
-    - 5、在加入成功后，给当前用户发送房间里的其它人消息
+    - 5、在加入成功后，给当前用户发送房间里的其它人消息 
         ``sendParticipantNames(UserSession user)``
         ```
            final JsonArray participantsArray = new JsonArray();
@@ -369,7 +385,7 @@
         </div>
      ```
 
-#  遗留问题：
+#  遗留问题处理：
    - 1. 单聊/群聊，点击发起 被接收方如果迟一些时间点接收，那么，发起方将收不到被接收方的回调消息； 
           此问题是由于浏览器拦截的原因，
          解决方式：需要设置浏览器允许即可；
@@ -382,12 +398,11 @@
    - 4. 群聊用户拒绝的情况下，提示……
          需要增加用户名，图片，然后获取IP和端口号
          解决方式：增加返回名称，提示：用户名+已经退出视频
-   5. 单聊，手机视频时，手机视频画面太小
-      解决方式：
+ 
    - 6. 视频时，对方如果关闭页面，需要发消息提示，用户已经即出视频；
         关闭窗口时，给好友发送消息即可；
         解决方式：不处理，视频直接就可以告诉好友关页面了，所以没必要再次发消息提醒；
-   7. IM视频聊天时，已经收到好友上线消息，同好友视频，提示好友不在线 
+   - 7. IM视频聊天时，已经收到好友上线消息，同好友视频，提示好友不在线 
       解决方式：判断条件有问题，直接拿缓存中用户判断即可；
    8. 群聊增加拉群功能： 赵酮 
           点击新增按钮，然后弹出所有人员列表，选中所要聊天的用户，确认进行添加名称
@@ -398,13 +413,45 @@
    - 11. 群聊用户离开房间时，出现加入房间
          解决方式：退出房间直接关闭窗口
    - 12. 群聊被动方加入时，其它用户用户名称为 0
-         
+         原因：群成员加入房间时，没有用户名
+         解决方式：增加用户名称即可；     
    - 13. synchronized 锁问题
    - 14. 房间名称问题，目前用的是ID;  
          解决方式：弹出页面时，增加房间名称，decodeUrl 解析Url 乱码问题
-   - 15. 群聊视频视频源不创建问题，异常退出问题；偶然出现；
-         原因：不明；
-         解决方式：          
+    15.  群聊视频视频源不创建问题，异常退出问题；偶然出现；
+         原因：由于网络问题造成        
+    16.  使用国豪电脑 websocket 连接异常问题；
+         原因：可能是网络原因造成的
+         
+   - 17. 创建websocket 问题，断线重连机制；
+         原因：websocket 网络问题，
+         解决方式：取消主动连接提示，设置为断开自动连接；
+   - 18. 即时通讯用户列表问题；
+         原因：部门类型导致数据结构有问题
+         解决方式：重新修改数据
+    19.  静音功能
+   - 20. 群聊进行时，要有拉群外人进群功能；
+         解决方式：1、拉群外人，可以在编辑群组中进行；
+                  2、视频过程中，不可以群外人员，除非先拉进群里面；然后告知用户进入；目前不支持给视频中新加入的用户发消息； 
+    21.  单聊，页面最大化效果
+    22.  群聊页面效果
+     5.  单聊，手机视频时，手机视频画面太小
+   - 23. 发起群聊时，一个用户没有进入房间，当再次点击视频进入房间时，会给其它用户发进行视频的消息， ；
+         解决方式：
+            方式一、增加限制 ，发过消息过后就不发了，其它用户进入房间时直接进入即可；此种方式有问题，当用户再次发起视频，则同样也发不了消息了；
+            方式二、建表，存储房间中当前群用户连接信息
+                   1、存储：房间号，房间名称，用户名，用户ID，
+                      逻辑，当用户加入房间，存储表数据一条,
+                           离开房间，删除当前用户数据；
+                      那么发起视频的时候
+                         首先查询一下当前房间有没有视频连接信息，如果没有，则直接给群用户发消息；
+                         如果有，那么直接进入房间
+            方式三、通过消息方式，但是这个会有wss问题；
+    24.  群聊视频加载方式：
+         分析
+            1：用户加入之后，直接放置于中间；
+    
+    
 ### netty 消息通信原理
    1.  用户登陆
       channelRead0  sessionId= null 

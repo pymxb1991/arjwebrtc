@@ -69,7 +69,7 @@ window.onload = function() {
 	// 获取页面参数
 	getUrlParemeter();
 
-	console = new Console();
+	//console = new Console();
 	/*setRegisterState(NOT_REGISTERED);*/
 	var drag = new Draggabilly(document.getElementById('videoSmall'));
 	videoInput = document.getElementById('videoInput');

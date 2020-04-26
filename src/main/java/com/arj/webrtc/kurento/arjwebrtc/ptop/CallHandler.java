@@ -157,6 +157,8 @@ public class CallHandler extends TextWebSocketHandler {
     if (name.isEmpty()) {
       responseMsg = "rejected: empty user name";
     } else if (registry.exists(name)) {
+      //此处应该直接替换调原来的sessionId，否则会出现sessionId无法清除的现象。
+      registry.register(caller);
       responseMsg = "rejected: user '" + name + "' already registered";
     } else {
       registry.register(caller);

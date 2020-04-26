@@ -28,10 +28,4 @@
         <appender-ref ref="file" />
     </root>
 
-    <!--&lt;!&ndash; logback为java中的包 &ndash;&gt;
-    <logger name="com.dudu.com.pymxb.controller"/>
-    &lt;!&ndash;logback.LogbackDemo：类的全路径 &ndash;&gt;
-    <logger name="com.dudu.com.pymxb.controller.LearnController" level="WARN" additivity="false">
-        <appender-ref ref="console"/>
-    </logger>-->
 </configuration>

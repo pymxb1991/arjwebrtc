@@ -55,6 +55,64 @@ function Participant(name,personName) {
 		 <span>maoxb</span>
 	 </div>
 	 */
+
+	var len = $("#participants .participant").length
+	console.log(len)
+	if(len<=1){
+		$("#participants .participant.main").css({
+			"width":"100%"
+			// "height":"20%",
+
+		})
+	}else if(len<=2){
+		$("#participants .participant").css({
+			"width":"100%"
+			// "height":"100%"
+
+		})
+		$("#participants .participant.main").css({
+			"width":"20%",
+			"height":"20%",
+			"position":"absolute",
+			"right":"10px",
+			"top":"10px",
+			"zIndex":"10"
+		})
+	}else if(len<=4 && len>2){
+		$("#participants .participant").css({
+			"width":"calc(50% - 16px)",
+			"height":"auto",
+			"marginRight":"16px",
+			"marginBottom":"16px"
+		})
+		$("#participants .participant.main").css({
+			"position":"sticky",
+		})
+	}else if(len<=6 && len>4){
+		$("#participants .participant").css({
+			"width":"calc(33.3333% - 16px)",
+			// "height":"calc(50% - 16px)",
+			"marginRight":"16px",
+			"marginBottom":"16px"
+
+		})
+		$("#participants .participant.main").css({
+			"position":"sticky",
+		})
+	}else if(len<=9 && len>6){
+		$("#participants .participant").css({
+			"width":"calc(33.3333% - 16px)",
+			// "height":"calc(33.3333% - 16px)",
+			"marginRight":"16px",
+			"marginBottom":"16px"
+		})
+		$("#participants .participant.main").css({
+			"position":"sticky",
+		})
+	}
+
+
+
 	this.getElement = function() {
 		return container;
 	}
