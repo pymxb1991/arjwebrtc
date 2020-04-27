@@ -36,10 +36,7 @@ function getUrlParemeter() {
 	}
 }
 window.onbeforeunload = function() {
-	sendMessage({
-		id : 'leaveRoom'
-		//userId: $('.participant.main').getAttribute('id')
-	});
+	leaveRoom();
 	ws.close();
 };
 
@@ -205,14 +202,17 @@ function receiveVideo(sender,senderName) {
 	var constraints = {
 		audio : true,
 		video : {
-			width:640,
-			height:480,
-			framerate : 15
+			mandatory : {
+				maxWidth : 640,
+				maxHeight : 480,
+				maxFrameRate : 15,
+				minFrameRate : 15
+			}
 		}
 	};
 	var options = {
       remoteVideo: video,
-		mediaConstraints: constraints,
+	  mediaConstraints: constraints,
       onicecandidate: participant.onIceCandidate.bind(participant)
     }
 
