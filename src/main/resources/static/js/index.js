@@ -361,7 +361,7 @@ function sendMessage(message) {
 			alert("连接已经断开!!!")
 			window.close();
 		}
-	}, 3000);
+	}, 5000);
 }
 
 function showSpinner() {

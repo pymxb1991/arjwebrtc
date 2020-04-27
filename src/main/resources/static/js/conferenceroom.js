@@ -288,11 +288,15 @@ function onParticipantLeft(request) {
 }
 
 function sendMessage(message) {
-	var jsonMessage = JSON.stringify(message);
-	console.log('Sending message: ' + jsonMessage);
-	ws.send(jsonMessage);
-	/*setTimeout(function () {
-
-	},5000);*/
-
+	//var jsonMessage = JSON.stringify(message);
+	console.log('Sending message: ' + message);
+	console.log('Sending message: ' + ws.readyState);
+	setTimeout(function () {
+		if (ws.readyState===1) {
+			ws.send(JSON.stringify(message));
+		}else{
+			alert("连接已经断开!!!")
+			window.close();
+		}
+	}, 5000);
 }
