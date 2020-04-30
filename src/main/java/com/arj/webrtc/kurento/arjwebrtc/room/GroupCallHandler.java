@@ -27,6 +27,7 @@ import org.kurento.client.IceCandidate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -44,6 +45,9 @@ public class GroupCallHandler extends TextWebSocketHandler {
   private static final Logger log = LoggerFactory.getLogger(GroupCallHandler.class);
 
   private static final Gson gson = new GsonBuilder().create();
+
+  @Value("${arjccm_rest_url}")
+  private String arjccmRestUrl;
 
   @Autowired
   private RoomManager roomManager;
@@ -122,9 +126,9 @@ public class GroupCallHandler extends TextWebSocketHandler {
 
     String url ="";
     if("add".equals(method)){
-      url = "http://192.168.1.238:8081/arjccm/app/rest/ImChat/saveUserGroupRel";
+      url = arjccmRestUrl + "/ImChat/saveUserGroupRel";
     }else{
-      url = "http://192.168.1.238:8081/arjccm/app/rest/ImChat/deleteUserGroupRel";
+      url = arjccmRestUrl + "/ImChat/deleteUserGroupRel";
     }
 
     RoomUserRel userRel = new RoomUserRel(roomId,userId);
@@ -133,8 +137,12 @@ public class GroupCallHandler extends TextWebSocketHandler {
     JSONObject resJson = JSONObject.parseObject(ret);
     String retCode = resJson.getString("result");
     String msg = "add".equals(method) ? "进入房间记录日志" :"离开房间记录日志";
-    if("1".equals(retCode)) {
+    if("1".equals(retCode) && null != retCode) {
       log.info(userName +"："+msg);
+    }else{
+      log.info("进入/离开房间异常！！，清空房间ID为【" +roomId+"：】所有记录信息");
+      String roomInfo = JSONObject.toJSONString(new RoomUserRel(roomId,""));
+      ret = Tool.sendPost(url, roomInfo);
     }
     return ret;
   }

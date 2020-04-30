@@ -7,6 +7,7 @@ import com.arj.webrtc.kurento.arjwebrtc.room.GroupCallHandler;
 import com.arj.webrtc.kurento.arjwebrtc.room.GroupUserRegistry;
 import com.arj.webrtc.kurento.arjwebrtc.room.RoomManager;
 import org.kurento.client.KurentoClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -21,6 +22,10 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @SpringBootApplication
 @EnableWebSocket
 public class ArjwebrtcApplication  extends SpringBootServletInitializer implements WebSocketConfigurer  {
+
+    @Value("${kurento_url}")
+    private String kurentoUrl;
+
     public static void main(String[] args) {
         SpringApplication.run(ArjwebrtcApplication.class, args);
     }
@@ -53,7 +58,7 @@ public class ArjwebrtcApplication  extends SpringBootServletInitializer implemen
     @Bean
     public KurentoClient kurentoClient() {
         // return KurentoClient.create("ws://95.169.9.32:8080/kurento");
-        return KurentoClient.create("ws://192.168.1.16:8888/kurento");
+        return KurentoClient.create(kurentoUrl);
     }
 
     @Override

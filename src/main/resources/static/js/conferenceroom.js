@@ -7,6 +7,7 @@ var name;
 var personName;
 var param = {};
 var audioFlag = true;
+var videoFlag = true;
 window.onload = function() {
 
 	// 获取页面参数
@@ -73,20 +74,40 @@ ws.onmessage = function(message) {
 		console.error('Unrecognized message', parsedMessage);
 	}
 }
+ws.close = function(){
+	/*console.log("ws.close")*/
+	console.log("关闭重进房间");
+//	ws =  new WebSocket('wss://' + location.host + '/groupcall');
+	//register(param.userId,param.userName,param.groupId,param.groupName);
+
+}
 
 function register(name,personName,room,groupName) {
 	/*name = document.getElementById('name').value;
 	var room = document.getElementById('roomName').value;*/
 
-	document.getElementById('room-header').innerText = groupName;// 'ROOM ' + room;
+	document.getElementById('room-header').innerText = param.groupName;// 'ROOM ' + room;
 	document.getElementById('join').style.display = 'none';
 	document.getElementById('room').style.display = 'block';
 
+	   /*
+		*     
+		*   0        CONNECTING        连接尚未建立
+		    1        OPEN            WebSocket的链接已经建立
+		    2        CLOSING            连接正在关闭
+		    3        CLOSED            连接已经关闭或不可用
+		* */
+	console.log("readyState:"+ws.readyState);
+	if (ws.readyState != 1) {
+		setTimeout(register, 3000);
+		return;
+	}
+
 	var message = {
 		id : 'joinRoom',
-		name : name,
-		personName : personName,
-		room : room,
+		name : param.userId,
+		personName : param.userName,
+		room : param.groupId
 	}
 	sendMessage(message);
 }
@@ -127,8 +148,8 @@ function onExistingParticipants(msg) {
 		audio : true,
 		video : {
 			 mandatory : {
-			 	maxWidth : 320,
-				 maxHeight : 240,
+			 	maxWidth : 640,
+				maxHeight : 480,
 			 	maxFrameRate : 15,
 			 	minFrameRate : 15
 			 },
@@ -173,22 +194,7 @@ function leaveRoom() {
 	ws.close();
 	window.close();
 }
-//静音功能
-function silentMode() {
-	if(audioFlag){
-		audioFlag = false;
-	}else{
-		audioFlag = true;
-	}
-}
-//关闭视频功能
-function closeVideo() {
-	if(audioFlag){
-		audioFlag = false;
-	}else{
-		audioFlag = true;
-	}
-}
+
 
 /**
  * 建立远程视频元素来展示流
@@ -200,13 +206,16 @@ function receiveVideo(sender,senderName) {
 	participants[sender] = participant;
 	var video = participant.getVideoElement();
 	var constraints = {
-		audio : true,
-		video : {
-			mandatory : {
-				maxWidth : 640,
-				maxHeight : 480,
-				maxFrameRate : 15,
-				minFrameRate : 15
+		audio: true,
+		video: {
+			frameRate: {
+				min: 1, ideal: 15, max: 30
+			},
+			width: {
+				min: 32, ideal: 50, max: 640
+			},
+			height: {
+				min: 32, ideal: 50, max: 480
 			}
 		}
 	};
@@ -235,13 +244,13 @@ function onParticipantLeft(request) {
 	if(len<=1){
 		$("#participants .participant.main").css({
 			"width":"100%",
-			"height":"auto",
+			"height":"100%"
 
 		})
 	}else if(len<=2){
 		$("#participants .participant").css({
-			"width":"100%"
-			// "height":"100%"
+			"width":"100%",
+			"height":"100%"
 
 		})
 		$("#participants .participant.main").css({
@@ -255,7 +264,7 @@ function onParticipantLeft(request) {
 	}else if(len<=4 && len>2){
 		$("#participants .participant").css({
 			"width":"calc(50% - 16px)",
-			"height":"auto",
+			"height":"calc(50% - 16px)",
 			"marginRight":"16px",
 			"marginBottom":"16px"
 		})
@@ -265,7 +274,7 @@ function onParticipantLeft(request) {
 	}else if(len<=6 && len>4){
 		$("#participants .participant").css({
 			"width":"calc(33.3333% - 16px)",
-			// "height":"calc(50% - 16px)",
+			"height":"calc(50% - 16px)",
 			"marginRight":"16px",
 			"marginBottom":"16px"
 
@@ -276,7 +285,7 @@ function onParticipantLeft(request) {
 	}else if(len<=9 && len>6){
 		$("#participants .participant").css({
 			"width":"calc(33.3333% - 16px)",
-			// "height":"calc(33.3333% - 16px)",
+			"height":"calc(33.3333% - 16px)",
 			"marginRight":"16px",
 			"marginBottom":"16px"
 		})
@@ -288,15 +297,86 @@ function onParticipantLeft(request) {
 }
 
 function sendMessage(message) {
-	//var jsonMessage = JSON.stringify(message);
-	console.log('Sending message: ' + message);
+	//如果退出成功 不在发送消息
+	var jsonMessage = JSON.stringify(message);
+	console.log('Sending message: ' + jsonMessage);
 	console.log('Sending message: ' + ws.readyState);
-	setTimeout(function () {
-		if (ws.readyState===1) {
-			ws.send(JSON.stringify(message));
-		}else{
-			alert("连接已经断开!!!")
-			window.close();
+	try {
+		setTimeout(function () {
+			if (ws.readyState===1) {
+				ws.send(jsonMessage);
+			}else{
+				console.log("连接已经断开!!!")
+				window.location.href = window.location.href;
+			}
+		}, 5000);
+	} catch(err) {
+		console.log(err);
+		if(err.toString().indexOf("CLOSED")!==-1){//1秒后重连
+			window.setTimeout(function (){sendMessage()},1000);
 		}
-	}, 5000);
+	}
+
+}
+
+
+//静音，关闭视频功能
+function excuteStream() {
+	debugger
+	var participant = participants[name];//获取当前用户窗体对象
+	var video = participant.getVideoElement();
+	var options = {
+		localVideo: video,
+		mediaConstraints: getConstraints(),
+		onicecandidate: participant.onIceCandidate.bind(participant)
+	}
+	// 仅仅需要发送数据，不需要接收
+	participant.rtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(options,
+		function (error) {
+			if(error) {
+				return console.error(error);
+			}
+			this.generateOffer (participant.offerToReceiveVideo.bind(participant));
+		});
+}
+function getConstraints() {
+	//var mode = $('input[name="mode"]:checked').val();
+	var constraints = {
+		audio : audioFlag,
+		video : videoFlag
+	}
+	/*	var constraints = {
+            audio : true,
+            video : true/!*{
+                mandatory : {
+                    maxWidth : 320,
+                    maxHeight : 240,
+                    maxFrameRate : 15,
+                    minFrameRate : 15
+                },*!/
+                // width:640,
+                // height:480,
+                //framerate : 15
+            }*/
+	return constraints;
+}
+//静音功能 -->只有视频
+function videoOnly() {
+	var video = $('.participant.main');
+
+	if(video.muted){
+		video.muted = true;
+	}else{
+		video.muted = false;
+	}
+	//excuteStream();
+}
+//关闭视频功能 --只有音频
+function audioOnly() {
+	if(videoFlag){
+		videoFlag = false;
+	}else{
+		videoFlag = true;
+	}
+	excuteStream();
 }

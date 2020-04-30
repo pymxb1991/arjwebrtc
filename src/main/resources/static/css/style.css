@@ -434,7 +434,7 @@ a.hovertext:hover:after, a.hovertext:focus:after {
 }
 .participant video{
     width: 100%;
-    /*height: 100%;*/
+    height: 100%;
 }
 .participant span{
     width: 100%;

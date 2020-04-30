@@ -36,7 +36,7 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * 即房间，1个房间 可能有多个UserSession实例。
- * @author Ivan Gracia (izanmail@gmail.com)
+ * @author
  * @since 4.3.1
  */
 public class Room implements Closeable { //实现 Closeable表示一种不再使用时需要关闭的资源。
@@ -83,7 +83,7 @@ public class Room implements Closeable { //实现 Closeable表示一种不再使
   }
 
   public void leave(GroupUserSession user) throws IOException {
-    log.debug("PARTICIPANT {}: Leaving room {}", user.getName(), this.name);
+    log.debug("PARTICIPANT {}: Leaving room {evict }", user.getName(), this.name);
     this.removeParticipant(user.getName());
     user.close();
   }

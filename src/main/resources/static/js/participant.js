@@ -48,6 +48,8 @@ function Participant(name,personName) {
 	video.id = 'video-' + name;
 	video.autoplay = true;
 	video.controls = false;
+	video.width = 640;
+	video.height = 480;
 
 	/**
 	 <div class="participant main" id="maoxb">
@@ -60,14 +62,14 @@ function Participant(name,personName) {
 	console.log(len)
 	if(len<=1){
 		$("#participants .participant.main").css({
-			"width":"100%"
-			// "height":"20%",
+			"width":"100%",
+			"height":"100%",
 
 		})
 	}else if(len<=2){
 		$("#participants .participant").css({
-			"width":"100%"
-			// "height":"100%"
+			"width":"100%",
+			"height":"100%"
 
 		})
 		$("#participants .participant.main").css({
@@ -81,7 +83,7 @@ function Participant(name,personName) {
 	}else if(len<=4 && len>2){
 		$("#participants .participant").css({
 			"width":"calc(50% - 16px)",
-			"height":"auto",
+			"height":"calc(50% - 16px)",
 			"marginRight":"16px",
 			"marginBottom":"16px"
 		})
@@ -91,7 +93,7 @@ function Participant(name,personName) {
 	}else if(len<=6 && len>4){
 		$("#participants .participant").css({
 			"width":"calc(33.3333% - 16px)",
-			// "height":"calc(50% - 16px)",
+			"height":"calc(50% - 16px)",
 			"marginRight":"16px",
 			"marginBottom":"16px"
 
@@ -102,7 +104,7 @@ function Participant(name,personName) {
 	}else if(len<=9 && len>6){
 		$("#participants .participant").css({
 			"width":"calc(33.3333% - 16px)",
-			// "height":"calc(33.3333% - 16px)",
+			"height":"calc(33.3333% - 16px)",
 			"marginRight":"16px",
 			"marginBottom":"16px"
 		})
