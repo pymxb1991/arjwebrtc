@@ -243,7 +243,6 @@ function onParticipantLeft(request) {
 		$("#participants .participant.main").css({
 			"width":"100%",
 			"height":"100%"
-
 		})
 	}else if(len<=2){
 		$("#participants .participant").css({
@@ -325,8 +324,10 @@ function excuteAudioStream() {
 	trackArray = participant.rtcPeer.getLocalStream().getAudioTracks();
 	trackArray.forEach((track) => {
 		if (track.kind === 'audio' && track.enabled) {
+			$('#videoOnly').text("开启声音");
 			track.enabled = false;
 		}else if (track.kind === 'audio' && !track.enabled) {
+			$('#videoOnly').text("关闭声音");
 			track.enabled = true;
 		}
 	});
@@ -339,8 +340,10 @@ function excuteVideoStream() {
 	trackArray = participant.rtcPeer.getLocalStream().getVideoTracks();
 	trackArray.forEach((track) => {
 		if (track.kind === 'video' && track.enabled) {
+			$('#audioOnly').text("开启画面");
 			track.enabled = false;
 		}else if (track.kind === 'video' && !track.enabled) {
+			$('#audioOnly').text("关闭画面");
 			track.enabled = true;
 		}
 	});
