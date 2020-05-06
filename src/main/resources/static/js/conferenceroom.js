@@ -194,8 +194,6 @@ function leaveRoom() {
 	ws.close();
 	window.close();
 }
-
-
 /**
  * 建立远程视频元素来展示流
  * @param sender
@@ -319,64 +317,31 @@ function sendMessage(message) {
 
 }
 
-
-//静音，关闭视频功能
-function excuteStream() {
-	debugger
+//静音功能
+function excuteAudioStream() {
 	var participant = participants[name];//获取当前用户窗体对象
 	var video = participant.getVideoElement();
-	var options = {
-		localVideo: video,
-		mediaConstraints: getConstraints(),
-		onicecandidate: participant.onIceCandidate.bind(participant)
-	}
-	// 仅仅需要发送数据，不需要接收
-	participant.rtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(options,
-		function (error) {
-			if(error) {
-				return console.error(error);
-			}
-			this.generateOffer (participant.offerToReceiveVideo.bind(participant));
-		});
+	var trackArray = [];
+	trackArray = participant.rtcPeer.getLocalStream().getAudioTracks();
+	trackArray.forEach((track) => {
+		if (track.kind === 'audio' && track.enabled) {
+			track.enabled = false;
+		}else if (track.kind === 'audio' && !track.enabled) {
+			track.enabled = true;
+		}
+	});
 }
-function getConstraints() {
-	//var mode = $('input[name="mode"]:checked').val();
-	var constraints = {
-		audio : audioFlag,
-		video : videoFlag
-	}
-	/*	var constraints = {
-            audio : true,
-            video : true/!*{
-                mandatory : {
-                    maxWidth : 320,
-                    maxHeight : 240,
-                    maxFrameRate : 15,
-                    minFrameRate : 15
-                },*!/
-                // width:640,
-                // height:480,
-                //framerate : 15
-            }*/
-	return constraints;
-}
-//静音功能 -->只有视频
-function videoOnly() {
-	var video = $('.participant.main');
-
-	if(video.muted){
-		video.muted = true;
-	}else{
-		video.muted = false;
-	}
-	//excuteStream();
-}
-//关闭视频功能 --只有音频
-function audioOnly() {
-	if(videoFlag){
-		videoFlag = false;
-	}else{
-		videoFlag = true;
-	}
-	excuteStream();
+//关闭视频画面，语音功能
+function excuteVideoStream() {
+	var participant = participants[name];//获取当前用户窗体对象
+	var video = participant.getVideoElement();
+	var trackArray = [];
+	trackArray = participant.rtcPeer.getLocalStream().getVideoTracks();
+	trackArray.forEach((track) => {
+		if (track.kind === 'video' && track.enabled) {
+			track.enabled = false;
+		}else if (track.kind === 'video' && !track.enabled) {
+			track.enabled = true;
+		}
+	});
 }
