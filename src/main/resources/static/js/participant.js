@@ -66,11 +66,17 @@ function Participant(name,personName) {
 			"height":"100%",
 
 		})
+		$(".participant span").css({
+			"line-height": "180px",
+		})
 	}else if(len<=2){
 		$("#participants .participant").css({
 			"width":"100%",
 			"height":"100%"
 
+		})
+		$(".participant span").css({
+			"line-height": "180px",
 		})
 		$("#participants .participant.main").css({
 			"width":"20%",
@@ -79,6 +85,9 @@ function Participant(name,personName) {
 			"right":"10px",
 			"top":"10px",
 			"zIndex":"10"
+		})
+		$(".participant.main span").css({
+			"line-height": "50px",
 		})
 	}else if(len<=4 && len>2){
 		$("#participants .participant").css({
