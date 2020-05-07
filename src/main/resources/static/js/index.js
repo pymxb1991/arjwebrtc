@@ -361,20 +361,21 @@ function sendMessage(message) {
 			alert("连接已经断开!!!")
 			window.close();
 		}
-	}, 5000);
+	}, 2000);
 }
 
 function showSpinner() {
 	for (var i = 0; i < arguments.length; i++) {
 		arguments[i].poster = './img/transparent-1px.png';
-		arguments[i].style.background = 'center transparent url("./img/spinner.gif") no-repeat';
+		arguments[i].style.background = 'center transparent url("./img/spinner.png") no-repeat';
+		arguments[i].style.backgroundSize = '40px'
 	}
 }
 
 function hideSpinner() {
 	for (var i = 0; i < arguments.length; i++) {
 		arguments[i].src = '';
-		arguments[i].poster = './img/webrtc.png';
+		arguments[i].poster = './img/BG.png';
 		arguments[i].style.background = '';
 	}
 }
@@ -389,6 +390,40 @@ function enableButton(id, functionName) {
 	$(id).attr('onclick', functionName);
 }
 
+//静音功能
+function excuteAudioStream() {
+	var trackArray = [];
+	trackArray = webRtcPeer.getLocalStream().getAudioTracks();
+	trackArray.forEach((track) => {
+		if (track.kind === 'audio' && track.enabled) {
+			$('#videoOnly').text("解除静音");
+			track.enabled = false;
+		}else if (track.kind === 'audio' && !track.enabled) {
+			$('#videoOnly').text("静音");
+			track.enabled = true;
+		}
+	});
+}
+//关闭视频画面，语音功能
+function excuteVideoStream() {
+	var trackArray = [];
+	trackArray = webRtcPeer.getLocalStream().getVideoTracks();
+	trackArray.forEach((track) => {
+		if (track.kind === 'video' && track.enabled) {
+			$('#audioOnly').text("开启画面");
+			$("#videoSmall").css({
+				"background":"url('./img/BG.png')",
+			})
+			track.enabled = false;
+		}else if (track.kind === 'video' && !track.enabled) {
+			$('#audioOnly').text("关闭画面");
+			$("#videoSmall").css({
+				"background":"",
+			})
+			track.enabled = true;
+		}
+	});
+}
 /**
  * Lightbox utility (to display media pipeline image in a modal dialog)
  */
