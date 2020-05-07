@@ -69,7 +69,7 @@ function Participant(name,personName) {
 		$(".participant span").css({
 			"line-height": "180px",
 		})
-	}else if(len<=2){
+	}else if(len<=2 && len>1){
 		$("#participants .participant").css({
 			"width":"100%",
 			"height":"100%"

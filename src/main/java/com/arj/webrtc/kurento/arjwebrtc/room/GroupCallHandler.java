@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.StringUtils;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -134,7 +135,14 @@ public class GroupCallHandler extends TextWebSocketHandler {
     RoomUserRel userRel = new RoomUserRel(roomId,userId);
     String s1 = JSONObject.toJSONString(userRel);
     String ret = Tool.sendPost(url, s1);
+    if(StringUtils.isEmpty(ret)){
+      log.info("进入/离开房间异常！！，清空房间ID为【" +roomId+"：】所有记录信息");
+      String roomInfo = JSONObject.toJSONString(new RoomUserRel(roomId,""));
+      ret = Tool.sendPost(url, roomInfo);
+      return ret;
+    }
     JSONObject resJson = JSONObject.parseObject(ret);
+
     String retCode = resJson.getString("result");
     String msg = "add".equals(method) ? "进入房间记录日志" :"离开房间记录日志";
     if("1".equals(retCode) && null != retCode) {
