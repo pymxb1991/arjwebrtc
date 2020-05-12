@@ -8,6 +8,8 @@ public class mapTest {
         public static void main(String[] args) {
 
             Map<String,String> map = new HashMap<String, String>();
+           // 0: Total: 2 'real' addresses discovered
+
 
             map.put("xiaocui1","gongchen");
             map.put("xiaocui2","daima");

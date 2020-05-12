@@ -25,6 +25,7 @@
 <script src="webjars/demo-console/index.js"></script>
 
 <script src="js/kurento-utils.js"></script>
+<script src="js/util.js"></script>
 <script src="js/index.js"></script>
 
 <title>Arj WebRtc: Video Call 1 to 1 with WebRTC</title>
@@ -46,7 +47,7 @@
 		</div>
 	</header>
 	<div class="container video-container">
-		<div style = "width: 100%;height: 100%;position: relative;">
+		<div id="videoContainer" style = "width: 100%;height: 100%;position: relative;">
 			<div id="videoBig">
 				<video id="videoOutput" autoplay width="100%" height="auto"
 					poster="img/BG.png"></video>
@@ -71,7 +72,7 @@
 					<p class="text"  id="videoOnly" >静音</p>
 				</li>
 				<li>
-					<a class="operationButton" id="button-leave" onmouseup="leaveRoom()">
+					<a class="operationButton" id="button-leave" onmouseup="leave()">
 						<i class="iconfont icontuichu"></i>
 					</a>
 					<p class="text">退出</p>

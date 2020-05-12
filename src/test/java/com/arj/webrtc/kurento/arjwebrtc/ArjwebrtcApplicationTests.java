@@ -1,29 +1,22 @@
 package com.arj.webrtc.kurento.arjwebrtc;
 
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-
-import java.io.IOException;
-
-@RunWith(SpringRunner.class)
-@SpringBootTest
+/*@RunWith(SpringRunner.class)
+@SpringBootTest*/
 public class ArjwebrtcApplicationTests {
 
 
-    @Test
+  /*  @Test
     public void setRedisInfo() throws IOException, ClassNotFoundException {
-      /*  // 将用户信息放到缓存中
+      *//*  // 将用户信息放到缓存中
         hello hello = new hello("mao");
         Jedis jedis = JedisPoolUtils.getJedis();
         jedis.set("c",SerializeUtils.objectSerialiable(hello));
         System.out.println(jedis.get("c"));
         hello o =  (hello)SerializeUtils.objectDeserialization(jedis.get("c"));
         System.out.println(o.getName());
-        //Assert.assertEquals("maoxb", SerializeUtils.serializeToObject(redisUtil.get("name")));*/
-    }
+        //Assert.assertEquals("maoxb", SerializeUtils.serializeToObject(redisUtil.get("name")));*//*
+    }*/
    /* @Test
     public void setRedis() {
         // 将用户信息放到缓存中

@@ -315,7 +315,7 @@ function incomingCallError() {
 	window.close();
 }
 
-function stop(message) {
+function leave(message) {
 	setCallState(NO_CALL);
 	if (webRtcPeer) {
 		webRtcPeer.dispose();
@@ -353,22 +353,54 @@ function onIceCandidate(candidate) {
  * 注意：发送消息时，必须要延时发送，延时时候需要根据现场环境配置一下
  * @param message
  */
-function sendMessage(message) {
+/*function sendMessage(message) {
 	setTimeout(function () {
 		if (ws.readyState===1) {
 			ws.send(JSON.stringify(message));
 		}else{
-			alert("连接已经断开!!!")
-			window.close();
+			//alert("连接已经断开!!!")
+			console.log("连接已经断开!!!")
+			window.location.href = window.location.href;
+			//window.close();
 		}
-	}, 2000);
+	}, 5000);
+}*/
+function sendMessage(message) {
+	//如果退出成功 不在发送消息
+	var jsonMessage = JSON.stringify(message);
+	console.log('Sending message: ' + jsonMessage);
+	console.log('Sending message: ' + ws.readyState);
+	try {
+		setTimeout(function () {
+			if (ws.readyState===1) {
+				ws.send(jsonMessage);
+			}else{
+				console.log("连接已经断开!!!")
+				window.location.href = window.location.href;
+			}
+		}, 5000);
+	} catch(err) {
+		console.log(err);
+		if(err.toString().indexOf("CLOSED")!==-1){//1秒后重连
+			window.setTimeout(function (){sendMessage()},1000);
+		}
+	}
+
 }
 
 function showSpinner() {
+	debugger
 	for (var i = 0; i < arguments.length; i++) {
-		arguments[i].poster = './img/transparent-1px.png';
-		arguments[i].style.background = 'center transparent url("./img/spinner.png") no-repeat';
-		arguments[i].style.backgroundSize = '40px'
+		if(arguments[i].id === 'videoInput'){
+			arguments[i].poster = './img/transparent-1px.png';
+			arguments[i].style.background = 'center transparent url("./img/loading.gif") no-repeat';
+			arguments[i].style.backgroundSize = '40px'
+		}else{
+			arguments[i].poster = './img/transparent-1px.png';
+			arguments[i].style.background = 'center transparent url("./img/loading.gif") no-repeat';
+			arguments[i].style.backgroundSize = '80px'
+		}
+
 	}
 }
 
@@ -411,16 +443,15 @@ function excuteVideoStream() {
 	trackArray.forEach((track) => {
 		if (track.kind === 'video' && track.enabled) {
 			$('#audioOnly').text("开启画面");
-			$("#videoSmall").css({
-				"background":"url('./img/BG.png')",
-			})
 			track.enabled = false;
+			//然后生成一个div 进行遮罩
+			divUtil.createDiv("videoSmall","videoMask");
+
+
 		}else if (track.kind === 'video' && !track.enabled) {
 			$('#audioOnly').text("关闭画面");
-			$("#videoSmall").css({
-				"background":"",
-			})
 			track.enabled = true;
+			divUtil.delDiv("videoSmall");
 		}
 	});
 }

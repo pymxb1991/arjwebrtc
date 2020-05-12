@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.arj.webrtc.kurento</groupId>
     <artifactId>arjwebrtc</artifactId>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <version>0.0.1-SNAPSHOT</version>
     <name>arjwebrtc</name>
 
@@ -32,7 +32,7 @@
     </properties>
 
     <dependencies>
-        <!-- springboot 配置元数据支持-->
+        <!-- springboot 配置元数据支持  配置文件处理器，配置文件进行绑定就会有提示-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
@@ -55,17 +55,17 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <!--使用外部tomcat需要把内置的tomcat排除-->
-            <exclusions>
+           <!-- <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-tomcat</artifactId>
                 </exclusion>
-            </exclusions>
+            </exclusions>-->
         </dependency>
 
         <!-- tomcat -->
-        <dependency>
-            <!--添加springboot-tomcat scope必须时 provided-->
+       <!-- <dependency>
+            &lt;!&ndash;添加springboot-tomcat scope必须时 provided&ndash;&gt;
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
             <scope>provided</scope>
@@ -74,7 +74,7 @@
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-jasper</artifactId>
             <scope>provided</scope>
-        </dependency>
+        </dependency>-->
         <!--引入thymeleaf -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -174,19 +174,6 @@
             <groupId>org.kurento</groupId>
             <artifactId>kurento-utils-js</artifactId>
             <version>${kurento-utils-js.version}</version>
-        </dependency>
-
-        <!--导入配置文件处理器，配置文件进行绑定就会有提示-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>1.2.61</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 

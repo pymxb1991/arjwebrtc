@@ -86,3 +86,21 @@
 	}
  
  }
+ var divUtil =  {
+     //接收参数：父级DIV的ID,父级DIV的css样式
+     createDiv:function (divMaskId,classNamed){
+         //1.首先动态创建一个容器标签元素，
+         var divElement = document.createElement ("div");
+         divElement.id = divMaskId + "-mask"
+         divElement.className = classNamed;
+         document.getElementById(divMaskId).appendChild(divElement)
+         return divElement;
+     },
+     //接收参数：父级DIV,兄弟DIV的ID
+     delDiv:function (divMaskId){
+         var divMaskElement = document.getElementById( divMaskId + "-mask");
+         document.getElementById(divMaskId).removeChild(divMaskElement);
+         var divElement = document.getElementById( divMaskId);
+         return divElement;
+     }
+ }
