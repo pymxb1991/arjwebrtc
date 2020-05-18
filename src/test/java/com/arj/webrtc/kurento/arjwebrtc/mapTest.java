@@ -17,7 +17,10 @@ public class mapTest {
             map.put("xiaocui4","dagong");
 
             System.out.println(map.keySet());
-
+            String x = map.get("x");
+            String remove = map.remove(x);
+            System.out.println(x);
+            System.out.println(remove);
             System.out.println("-----分割线-----");
             for(String map1 : map.keySet()){
                 String string = map.keySet().toString();

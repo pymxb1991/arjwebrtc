@@ -1,6 +1,18 @@
 
 var ws = new WebSocket('wss://' + location.host + '/groupcall');
 var participants = {};
+var iceservers={
+	"iceServers":[
+		{
+			urls:"stun:47.94.247.75:3478"
+		},
+		{
+			urls:["turn:47.94.247.75:3478"],
+			username:"mytest",
+			credential: "123456"
+		}
+	]
+}
 /*用户ID */
 var name;
 /* 用户名称 */
@@ -167,6 +179,7 @@ function onExistingParticipants(msg) {
 	var options = {
 	      localVideo: video,
 	      mediaConstraints: constraints,
+		  configuration: iceservers,
 	      onicecandidate: participant.onIceCandidate.bind(participant)
 	    }
 	// 仅仅需要发送数据，不需要接收
@@ -220,6 +233,7 @@ function receiveVideo(sender,senderName) {
 	var options = {
       remoteVideo: video,
 	  mediaConstraints: constraints,
+	  configuration: iceservers,
       onicecandidate: participant.onIceCandidate.bind(participant)
     }
 
@@ -315,7 +329,7 @@ function sendMessage(message) {
 				console.log("连接已经断开!!!")
 				window.location.href = window.location.href;
 			}
-		}, 5000);
+		}, 1000);
 	} catch(err) {
 		console.log(err);
 		if(err.toString().indexOf("CLOSED")!==-1){//1秒后重连

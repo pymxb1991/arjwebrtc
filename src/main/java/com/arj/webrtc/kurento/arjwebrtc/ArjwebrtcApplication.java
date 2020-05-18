@@ -19,6 +19,8 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 
 //import org.springframework.boot.web.support.SpringBootServletInitializer;
 
+/**
+ */
 @SpringBootApplication
 @EnableWebSocket
 public class ArjwebrtcApplication  extends SpringBootServletInitializer implements WebSocketConfigurer  {

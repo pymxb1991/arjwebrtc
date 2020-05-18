@@ -1,5 +1,17 @@
 
 var ws =  new WebSocket('wss://' + location.host + '/call');
+var iceservers={
+	"iceServers":[
+		{
+			urls:"stun:47.94.247.75:3478"
+		},
+		{
+			urls:["turn:47.94.247.75:3478"],
+			username:"mytest",
+			credential: "123456"
+		}
+	]
+}
 var videoInput;
 var videoOutput;
 var webRtcPeer;
@@ -216,6 +228,7 @@ function incomingCall(message) {
 		localVideo : videoInput,
 		remoteVideo : videoOutput,
 		onicecandidate : onIceCandidate,
+		configuration: iceservers,
 		onerror : onError
 	}
 	webRtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerSendrecv(options,
@@ -279,7 +292,9 @@ function call() {
 		remoteVideo : videoOutput,
 		//mediaConstraints : getConstraints(),
 		onicecandidate : onIceCandidate,
+		configuration: iceservers,
 		onerror : onError
+
 	}
 	//KMS生成一个SDP offer，此Offer返回给KMS客户端（应用服务器），再被转发给浏览器
 	// 创建一个连接。注意，在双方都需要创建连接，创建的时机，就是服务器确认了两者要进行通信之后
@@ -378,7 +393,7 @@ function sendMessage(message) {
 				console.log("连接已经断开!!!")
 				window.location.href = window.location.href;
 			}
-		}, 5000);
+		}, 1000);
 	} catch(err) {
 		console.log(err);
 		if(err.toString().indexOf("CLOSED")!==-1){//1秒后重连

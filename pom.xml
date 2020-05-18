@@ -55,17 +55,17 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <!--使用外部tomcat需要把内置的tomcat排除-->
-           <!-- <exclusions>
+           <exclusions>
                 <exclusion>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-tomcat</artifactId>
                 </exclusion>
-            </exclusions>-->
+            </exclusions>
         </dependency>
 
         <!-- tomcat -->
-       <!-- <dependency>
-            &lt;!&ndash;添加springboot-tomcat scope必须时 provided&ndash;&gt;
+       <dependency>
+           <!--添加springboot-tomcat scope必须时 provided-->
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-tomcat</artifactId>
             <scope>provided</scope>
@@ -74,7 +74,7 @@
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-jasper</artifactId>
             <scope>provided</scope>
-        </dependency>-->
+        </dependency>
         <!--引入thymeleaf -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -185,7 +185,37 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>1.1.1</version>
+                <!-- 主配置部分-->
+                <configuration>
+                    <!--  镜像名称 （最后需要生成的镜像的名称）-->
+                    <imageName>192.168.1.235:5000/${project.artifactId}:${project.version}</imageName>
+
+                    <!-- 远程仓库的地址和端口。dockerHost必须是http，不能是tcp。 -->
+                    <dockerHost>http://192.168.1.235:2375</dockerHost>
+                    <!-- 使用的是maven -->
+                    <!-- <baseImage>maven</baseImage> -->
+                    <!-- 基础镜像   相当于Dockerfile手动生成文件中的  FORM  jdk1.8-->
+                    <baseImage>jdk1.8</baseImage>
+
+                    <!--入口点 相当于Dockerfile手动生成文件中的 ENTRYPOINT ["java","-jar","/app.jar"] -->
+                    <entryPoint>["java", "-jar", "/${project.build.finalName}.jar"]</entryPoint>
+                    <!-- copy the service's jar file from target into the root directory of the image -->
+                    <resources>
+                        <!-- 指定源 路径-->
+                        <resource>
+                            <targetPath>/</targetPath>
+                            <directory>${project.build.directory}</directory>  <!-- target 路径  -->
+                            <include>${project.build.finalName}.jar</include>   <!--文件名   相当于Dockerfile手动生成文件中的 ADD app.jar -->
+                        </resource>
+                    </resources>
+                </configuration>
+            </plugin>
         </plugins>
+
     </build>
 
 </project>
