@@ -163,6 +163,7 @@ public class CallHandler extends TextWebSocketHandler {
     } else {
       registry.register(caller);
     }
+    log.debug(name + " : rejected successful ------------->");
     JsonObject response = new JsonObject();
     response.addProperty("id", "registerResponse");
     response.addProperty("response", responseMsg);
@@ -174,7 +175,7 @@ public class CallHandler extends TextWebSocketHandler {
     String to = jsonMessage.get("to").getAsString();
     String from = jsonMessage.get("from").getAsString();
     JsonObject response = new JsonObject();
-
+    log.debug(from + " : calling   successful -------------> ");
     if (registry.exists(to)) {
       // Endpoint configuration
       caller.setSdpOffer(jsonMessage.getAsJsonPrimitive("sdpOffer").getAsString());
@@ -204,7 +205,7 @@ public class CallHandler extends TextWebSocketHandler {
     String to = calleer.getCallingTo();
     if ("accept".equals(callResponse)) {
       log.debug("Accepted call from '{}' to '{}'", from, to);
-
+      log.debug(to + " : incomingCallResponse   successful -------------> ");
       CallMediaPipeline pipeline = null;
       try {
         pipeline = new CallMediaPipeline(kurento);

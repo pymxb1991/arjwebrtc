@@ -1,13 +1,23 @@
 
-var ws = new WebSocket('wss://' + location.host + '/groupcall');
+//var ws = new WebSocket('wss://' + location.host + '/groupcall');
+ var ws ;//=  new WebSocket('wss://' + location.host + '/call');
+ if(location.host.startsWith("local")
+ 	|| location.host.startsWith("127")
+ 	|| location.host.startsWith("10")){
+ 	ws = new WebSocket('wss://' + location.host + '/groupcall')
+ }else if(location.host.startsWith("153")){
+ 	ws = new WebSocket('wss://153.0.171.158:9091/groupcall')
+ }
 var participants = {};
 var iceservers={
 	"iceServers":[
 		{
-			urls:"stun:47.94.247.75:3478"
+			urls:"stun:153.0.171.158:3478"
+			//urls:"stun:47.94.247.75:3478"
 		},
 		{
-			urls:["turn:47.94.247.75:3478"],
+			urls:["turn:153.0.171.158:3478"],
+			//urls:["turn:47.94.247.75:3478"],
 			username:"mytest",
 			credential: "123456"
 		}
@@ -27,7 +37,10 @@ window.onload = function() {
 	name = param.userId;
 	personName = param.userName;
 	//页面加载完毕之后直接获取用户房间进行注册,绑定房间
-	register(name,personName,param.groupId,param.groupName);
+			
+	setTimeout(function () {		
+		register(name,personName,param.groupId,param.groupName);
+	},2000);
 }
 /**
  * 获取地址参数
@@ -50,7 +63,7 @@ function getUrlParemeter() {
 }
 window.onbeforeunload = function() {
 	leaveRoom();
-	ws.close();
+	//ws.close();
 };
 
 
@@ -205,7 +218,10 @@ function leaveRoom() {
 		participants[key].dispose();
 	}
 	ws.close();
-	window.close();
+		
+	setTimeout(function () {
+		window.close();
+	},2000);
 }
 /**
  * 建立远程视频元素来展示流
@@ -321,21 +337,22 @@ function sendMessage(message) {
 	var jsonMessage = JSON.stringify(message);
 	console.log('Sending message: ' + jsonMessage);
 	console.log('Sending message: ' + ws.readyState);
-	try {
-		setTimeout(function () {
-			if (ws.readyState===1) {
-				ws.send(jsonMessage);
-			}else{
-				console.log("连接已经断开!!!")
-				window.location.href = window.location.href;
-			}
-		}, 1000);
-	} catch(err) {
-		console.log(err);
-		if(err.toString().indexOf("CLOSED")!==-1){//1秒后重连
-			window.setTimeout(function (){sendMessage()},1000);
-		}
-	}
+	ws.send(jsonMessage);
+	//try {
+	//	setTimeout(function () {
+	//		if (ws.readyState===1) {
+	//			ws.send(jsonMessage);
+	//		}else{
+	//			console.log("连接已经断开!!!")
+	//			window.location.href = window.location.href;
+	//		}
+	//	}, 500);
+	//} catch(err) {
+	//	console.log(err);
+	//	if(err.toString().indexOf("CLOSED")!==-1){//1秒后重连
+	//		window.setTimeout(function (){sendMessage()},1000);
+	//	}
+	//}
 
 }
 
