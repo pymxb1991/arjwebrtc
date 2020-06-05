@@ -251,6 +251,10 @@ public class GroupUserSession implements Closeable {
 
   public void sendMessage(JsonObject message) throws IOException {
     log.debug("sendMessage ---->>  USER {}: Sending message {}", name, message);
+
+    if(!session.isOpen()){
+        return;
+    }
     synchronized (session) {
       session.sendMessage(new TextMessage(message.toString()));
     }

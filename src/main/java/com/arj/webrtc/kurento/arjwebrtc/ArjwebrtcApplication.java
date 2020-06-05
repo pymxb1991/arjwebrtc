@@ -20,10 +20,11 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 //import org.springframework.boot.web.support.SpringBootServletInitializer;
 
 /**
+ *
  */
 @SpringBootApplication
 @EnableWebSocket
-public class ArjwebrtcApplication  extends SpringBootServletInitializer implements WebSocketConfigurer  {
+public class ArjwebrtcApplication extends SpringBootServletInitializer implements WebSocketConfigurer {
 
     @Value("${kurento_url}")
     private String kurentoUrl;
@@ -53,21 +54,32 @@ public class ArjwebrtcApplication  extends SpringBootServletInitializer implemen
     public GroupUserRegistry GroupRegistry() {
         return new GroupUserRegistry();
     }
+
     @Bean
     public RoomManager roomManager() {
         return new RoomManager();
     }
+
     @Bean
     public KurentoClient kurentoClient() {
         // return KurentoClient.create("ws://95.169.9.32:8080/kurento");
+        System.setProperty("kurento.client.requestTimeout", "1000000");
+        KurentoClient kurentoClient1 = KurentoClient.create(kurentoUrl);
+        // kurentoClient
         return KurentoClient.create(kurentoUrl);
+//        KurentoClient.createFromJsonRpcClient(new J)
+//        JsonRpcClient jsonRpcClient = new JsonRpcClientWebSocket(url); //remember to provide URL of KMS here
+//        jsonRpcClient.setConnectionTimeoutValue(10000); //Value in ms
+//        return KurentoClient.createFromJsonRpcClient(jsonRpcClient);
+
     }
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-         registry.addHandler(callHandler(), "/call").setAllowedOrigins("*").addInterceptors(new WebSocketInterceptor());
-         registry.addHandler(groupCallHandler(), "/groupcall").setAllowedOrigins("*").addInterceptors(new WebSocketInterceptor());
+        registry.addHandler(callHandler(), "/call").setAllowedOrigins("*").addInterceptors(new WebSocketInterceptor());
+        registry.addHandler(groupCallHandler(), "/groupcall").setAllowedOrigins("*").addInterceptors(new WebSocketInterceptor());
     }
+
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources(ArjwebrtcApplication.class);

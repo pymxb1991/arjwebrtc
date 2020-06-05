@@ -65,7 +65,7 @@ public class GroupCallHandler extends TextWebSocketHandler {
     if (user != null) {
       log.debug("Incoming message from user '{}': {}", user.getName(), jsonMessage);
     } else {
-      log.debug("Incoming message from new user: {}", jsonMessage);
+      log.debug("handleTextMessage  user == null  : Incoming message from new user: {}", jsonMessage);
     }
 
     switch (jsonMessage.get("id").getAsString()) {
@@ -73,10 +73,13 @@ public class GroupCallHandler extends TextWebSocketHandler {
         joinRoom(jsonMessage, session);
         break;
       case "receiveVideoFrom":
-        final String senderName = jsonMessage.get("sender").getAsString();
-        final GroupUserSession sender = registry.getByName(senderName);
-        final String sdpOffer = jsonMessage.get("sdpOffer").getAsString();
-        user.receiveVideoFrom(sender, sdpOffer);
+        if(user!=null){
+          final String senderName = jsonMessage.get("sender").getAsString();
+          final GroupUserSession sender = registry.getByName(senderName);
+          final String sdpOffer = jsonMessage.get("sdpOffer").getAsString();
+          user.receiveVideoFrom(sender, sdpOffer);
+        }
+
         break;
       case "leaveRoom":
         leaveRoom(user);
@@ -99,7 +102,7 @@ public class GroupCallHandler extends TextWebSocketHandler {
   public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
     GroupUserSession user = registry.removeBySession(session);
     roomManager.getRoom(user.getRoomName()).leave(user);
-    updateRoomUserInfo( user.getName(), user.getPersonName(), user.getRoomName(), "del");
+   // updateRoomUserInfo( user.getName(), user.getPersonName(), user.getRoomName(), "del");
   }
 
   private void joinRoom(JsonObject params, WebSocketSession session) throws IOException {
@@ -111,13 +114,13 @@ public class GroupCallHandler extends TextWebSocketHandler {
     Room room = roomManager.getRoom(roomName);
     final GroupUserSession user = room.join(name,personName, session);
     registry.register(user);
-    updateRoomUserInfo( name, personName, roomName, "add");
+   // updateRoomUserInfo( name, personName, roomName, "add");
 
   }
 
   private void leaveRoom(GroupUserSession user) throws IOException {
     final Room room = roomManager.getRoom(user.getRoomName());
-    updateRoomUserInfo( user.getName(),user.getPersonName(),  user.getRoomName(), "del");
+   // updateRoomUserInfo( user.getName(),user.getPersonName(),  user.getRoomName(), "del");
     room.leave(user);
     if (room.getParticipants().isEmpty()) {
       roomManager.removeRoom(room);

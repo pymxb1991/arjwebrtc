@@ -1,28 +1,45 @@
 
 //var ws = new WebSocket('wss://' + location.host + '/groupcall');
- var ws ;//=  new WebSocket('wss://' + location.host + '/call');
- if(location.host.startsWith("local")
- 	|| location.host.startsWith("127")
- 	|| location.host.startsWith("10")){
- 	ws = new WebSocket('wss://' + location.host + '/groupcall')
- }else if(location.host.startsWith("153")){
- 	ws = new WebSocket('wss://153.0.171.158:9091/groupcall')
- }
-var participants = {};
-var iceservers={
-	"iceServers":[
-		{
-			urls:"stun:153.0.171.158:3478"
-			//urls:"stun:47.94.247.75:3478"
-		},
-		{
-			urls:["turn:153.0.171.158:3478"],
-			//urls:["turn:47.94.247.75:3478"],
-			username:"mytest",
-			credential: "123456"
-		}
-	]
+var ws ;//=  new WebSocket('wss://' + location.host + '/call');
+var iceservers;
+if(location.host.startsWith("local")
+	|| location.host.startsWith("127")
+	|| location.host.startsWith("10")){
+	ws = new WebSocket('wss://' + location.host + '/groupcall');
+	iceservers={
+		"iceServers":[
+			{
+				urls:"stun:10.224.13.145:3478"
+				//urls:"stun:47.94.247.75:3478"
+			},
+			{
+				urls:["turn:10.224.13.145:3478"],
+				//urls:["turn:47.94.247.75:3478"],
+				username:"mytest",
+				credential: "123456"
+			}
+		]
+	}
+}else if(location.host.startsWith("153")){
+	ws = new WebSocket('wss://153.0.171.158:9091/groupcall');
+	iceservers={
+		"iceServers":[
+			{
+				urls:"stun:153.0.171.158:3478"
+				//urls:"stun:47.94.247.75:3478"
+			},
+			{
+				urls:["turn:153.0.171.158:3478"],
+				//urls:["turn:47.94.247.75:3478"],
+				username:"mytest",
+				credential: "123456"
+			}
+		]
+	}
 }
+console.log("iceservers: " ,iceservers);
+var participants = {};
+
 /*用户ID */
 var name;
 /* 用户名称 */
@@ -37,10 +54,10 @@ window.onload = function() {
 	name = param.userId;
 	personName = param.userName;
 	//页面加载完毕之后直接获取用户房间进行注册,绑定房间
-			
-	setTimeout(function () {		
+
+	setTimeout(function () {
 		register(name,personName,param.groupId,param.groupName);
-	},2000);
+	},10000);
 }
 /**
  * 获取地址参数
@@ -72,31 +89,31 @@ ws.onmessage = function(message) {
 	console.info('Received message: ' + message.data);
 
 	switch (parsedMessage.id) {
-	case 'existingParticipants':////现参与者回调
-		onExistingParticipants(parsedMessage);
-		break;
-	case 'newParticipantArrived': //新人加入
-		onNewParticipant(parsedMessage);
-		break;
-	case 'participantLeft':
-		onParticipantLeft(parsedMessage);
-		break;
-	case 'receiveVideoAnswer':
-		receiveVideoResponse(parsedMessage);
-		break;
+		case 'existingParticipants':////现参与者回调
+			onExistingParticipants(parsedMessage);
+			break;
+		case 'newParticipantArrived': //新人加入
+			onNewParticipant(parsedMessage);
+			break;
+		case 'participantLeft':
+			onParticipantLeft(parsedMessage);
+			break;
+		case 'receiveVideoAnswer':
+			receiveVideoResponse(parsedMessage);
+			break;
 		case 'iceCandidate':
-		//parsedMessage: {id: "receiveVideoAnswer", name: "admin", sdpAnswer: ""}
-		//participants: {admin: Participant}  Participant是一个窗体对象
-		//participants[admin] = Participant
-		participants[parsedMessage.name].rtcPeer.addIceCandidate(parsedMessage.candidate, function (error) {
-	        if (error) {
-		      console.error("Error adding candidate: " + error);
-		      return;
-	        }
-	    });
-	    break;
-	default:
-		console.error('Unrecognized message', parsedMessage);
+			//parsedMessage: {id: "receiveVideoAnswer", name: "admin", sdpAnswer: ""}
+			//participants: {admin: Participant}  Participant是一个窗体对象
+			//participants[admin] = Participant
+			participants[parsedMessage.name].rtcPeer.addIceCandidate(parsedMessage.candidate, function (error) {
+				if (error) {
+					console.error("Error adding candidate: " + error);
+					return;
+				}
+			});
+			break;
+		default:
+			console.error('Unrecognized message', parsedMessage);
 	}
 }
 ws.close = function(){
@@ -115,13 +132,13 @@ function register(name,personName,room,groupName) {
 	document.getElementById('join').style.display = 'none';
 	document.getElementById('room').style.display = 'block';
 
-	   /*
-		*     
-		*   0        CONNECTING        连接尚未建立
-		    1        OPEN            WebSocket的链接已经建立
-		    2        CLOSING            连接正在关闭
-		    3        CLOSED            连接已经关闭或不可用
-		* */
+	/*
+     *     
+     *   0        CONNECTING        连接尚未建立
+         1        OPEN            WebSocket的链接已经建立
+         2        CLOSING            连接正在关闭
+         3        CLOSED            连接已经关闭或不可用
+     * */
 	console.log("readyState:"+ws.readyState);
 	if (ws.readyState != 1) {
 		setTimeout(register, 3000);
@@ -172,12 +189,12 @@ function onExistingParticipants(msg) {
 	var constraints = {
 		audio : true,
 		video : {
-			 mandatory : {
-			 	maxWidth : 640,
+			mandatory : {
+				maxWidth : 640,
 				maxHeight : 480,
-			 	maxFrameRate : 15,
-			 	minFrameRate : 15
-			 },
+				maxFrameRate : 15,
+				minFrameRate : 15
+			},
 			// width:640,
 			// height:480,
 			//framerate : 15
@@ -190,20 +207,20 @@ function onExistingParticipants(msg) {
 	var video = participant.getVideoElement();
 
 	var options = {
-	      localVideo: video,
-	      mediaConstraints: constraints,
-		  configuration: iceservers,
-	      onicecandidate: participant.onIceCandidate.bind(participant)
-	    }
+		localVideo: video,
+		mediaConstraints: constraints,
+		configuration: iceservers,
+		onicecandidate: participant.onIceCandidate.bind(participant)
+	}
 	// 仅仅需要发送数据，不需要接收
 	participant.rtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerSendonly(options,
 		function (error) {
-		  if(error) {
-			  return console.error(error);
-		  }
-		  this.generateOffer (participant.offerToReceiveVideo.bind(participant));
-	});
-   //participantsArray 除当前用户外的所有人
+			if(error) {
+				return console.error(error);
+			}
+			this.generateOffer (participant.offerToReceiveVideo.bind(participant));
+		});
+	//participantsArray 除当前用户外的所有人
 	msg.data.forEach(item=>{
 		receiveVideo(item.name,item.personName);
 	});
@@ -218,7 +235,7 @@ function leaveRoom() {
 		participants[key].dispose();
 	}
 	ws.close();
-		
+
 	setTimeout(function () {
 		window.close();
 	},2000);
@@ -247,19 +264,19 @@ function receiveVideo(sender,senderName) {
 		}
 	};
 	var options = {
-      remoteVideo: video,
-	  mediaConstraints: constraints,
-	  configuration: iceservers,
-      onicecandidate: participant.onIceCandidate.bind(participant)
-    }
+		remoteVideo: video,
+		mediaConstraints: constraints,
+		configuration: iceservers,
+		onicecandidate: participant.onIceCandidate.bind(participant)
+	}
 
 	participant.rtcPeer = new kurentoUtils.WebRtcPeer.WebRtcPeerRecvonly(options,
-			function (error) {
-			  if(error) {
-				  return console.error(error);
-			  }
-			  this.generateOffer (participant.offerToReceiveVideo.bind(participant));
-	});
+		function (error) {
+			if(error) {
+				return console.error(error);
+			}
+			this.generateOffer (participant.offerToReceiveVideo.bind(participant));
+		});
 }
 
 function onParticipantLeft(request) {

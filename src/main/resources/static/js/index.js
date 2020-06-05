@@ -2,29 +2,44 @@
 //var ws =  new WebSocket('wss://' + location.host + '/call');
 var ws ;//=  new WebSocket('wss://' + location.host + '/call');
 //var initWebSocket = function(){
+var iceservers;	
  if(location.host.startsWith("local")
 	|| location.host.startsWith("127")
 	|| location.host.startsWith("10")){
-	ws = new WebSocket('wss://' + location.host + '/call')
+	ws = new WebSocket('wss://' + location.host + '/call');
+	iceservers={
+		"iceServers":[
+			{
+				//urls:"stun:47.94.247.75:3478"
+				urls:"stun:10.224.13.145:3478"
+			},
+			{
+				//urls:["turn:47.94.247.75:3478"],
+				urls:["turn:10.224.13.145:3478"],
+				username:"mytest",
+				credential: "123456"
+			}
+		]
+	};
  }else if(location.host.startsWith("153")){
-	ws = new WebSocket('wss://153.0.171.158:9091/call')
+	ws = new WebSocket('wss://153.0.171.158:9091/call');
+	iceservers={
+		"iceServers":[
+			{
+				//urls:"stun:47.94.247.75:3478"
+				urls:"stun:153.0.171.158:3478"
+			},
+			{
+				//urls:["turn:47.94.247.75:3478"],
+				urls:["turn:153.0.171.158:3478"],
+				username:"mytest",
+				credential: "123456"
+			}
+		]
+	};
  }
 //}
-
-var iceservers={
-	"iceServers":[
-		{
-			//urls:"stun:47.94.247.75:3478"
-			urls:"stun:153.0.171.158:3478"
-		},
-		{
-			//urls:["turn:47.94.247.75:3478"],
-			urls:["turn:153.0.171.158:3478"],
-			username:"mytest",
-			credential: "123456"
-		}
-	]
-}
+console.log("iceservers: " ,iceservers);
 var videoInput;
 var videoOutput;
 var webRtcPeer;

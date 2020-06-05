@@ -24,9 +24,9 @@
         <demo-console.version>1.5.1</demo-console.version>
         <draggabilly.version>2.1.0</draggabilly.version>
         <ekko-lightbox.version>4.0.2</ekko-lightbox.version>
-        <webrtc-adapter.version>6.1.0</webrtc-adapter.version>
-        <kurento-client.version>6.10.0</kurento-client.version>
-        <kurento-utils-js.version>6.7.0</kurento-utils-js.version>
+        <webrtc-adapter.version>6.4.0</webrtc-adapter.version>
+        <kurento-client.version>6.13.1</kurento-client.version>
+        <kurento-utils-js.version>6.13.1</kurento-utils-js.version>
        <!-- <thymeleaf.version>3.0.9</thymeleaf.version>
         <thymeleaf-layout-dialect.version>2.2.2</thymeleaf-layout-dialect.version>-->
     </properties>
