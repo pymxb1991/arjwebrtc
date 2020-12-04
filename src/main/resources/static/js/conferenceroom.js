@@ -4,17 +4,17 @@ var ws ;//=  new WebSocket('wss://' + location.host + '/call');
 var iceservers;
 if(location.host.startsWith("local")
 	|| location.host.startsWith("127")
-	|| location.host.startsWith("10")){
+	|| location.host.startsWith("192")){
 	ws = new WebSocket('wss://' + location.host + '/groupcall');
 	iceservers={
 		"iceServers":[
 			{
-				urls:"stun:10.224.13.145:3478"
-				//urls:"stun:47.94.247.75:3478"
+				//urls:"stun:192.168.1.109:3478"
+				urls:"stun:47.94.247.75:3478"
 			},
 			{
-				urls:["turn:10.224.13.145:3478"],
-				//urls:["turn:47.94.247.75:3478"],
+				//urls:["turn:192.168.1.109:3478"],
+				urls:["turn:47.94.247.75:3478"],
 				username:"mytest",
 				credential: "123456"
 			}

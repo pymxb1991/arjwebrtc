@@ -203,6 +203,8 @@ public class CallHandler extends TextWebSocketHandler {
     String from = jsonMessage.get("from").getAsString();
     final UserSession calleer = registry.getByName(from);
     String to = calleer.getCallingTo();
+
+    log.debug(from + " : incomingCallResponse   successful -------------> ");
     if ("accept".equals(callResponse)) {
       log.debug("Accepted call from '{}' to '{}'", from, to);
       log.debug(to + " : incomingCallResponse   successful -------------> ");

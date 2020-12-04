@@ -1,14 +1,21 @@
 package com.arj.webrtc.kurento.arjwebrtc;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class mapTest {
 
         public static void main(String[] args) {
 
+            String json = "3,1";
+
+            List<String> strings = Arrays.asList(json);
+            System.out.println(strings.size());
             Map<String,String> map = new HashMap<String, String>();
            // 0: Total: 2 'real' addresses discovered
+
 
 
             map.put("xiaocui1","gongchen");

@@ -5,17 +5,17 @@ var ws ;//=  new WebSocket('wss://' + location.host + '/call');
 var iceservers;	
  if(location.host.startsWith("local")
 	|| location.host.startsWith("127")
-	|| location.host.startsWith("10")){
+	|| location.host.startsWith("192")){
 	ws = new WebSocket('wss://' + location.host + '/call');
 	iceservers={
 		"iceServers":[
 			{
-				//urls:"stun:47.94.247.75:3478"
-				urls:"stun:10.224.13.145:3478"
+				urls:"stun:47.94.247.75:3478"
+				//urls:"stun:192.168.1.109:3478"
 			},
 			{
-				//urls:["turn:47.94.247.75:3478"],
-				urls:["turn:10.224.13.145:3478"],
+				urls:["turn:47.94.247.75:3478"],
+				//urls:["turn:192.168.1.109:3478"],
 				username:"mytest",
 				credential: "123456"
 			}
@@ -174,7 +174,7 @@ function getUrlParemeter() {
 function registerResponse(message) {
 	if (message.response == 'accepted') {
 		setRegisterState(REGISTERED);
-		/*console.log("2、register complete Response………… --------- > ",message.userId);*/
+		console.log("2、register complete Response………… --------- > ",message.userId);
 		if("caller" == param.callType){
 			call();
 		}
@@ -209,18 +209,20 @@ function callResponse(message) {
 }
 
 function startCommunication(message) {
-	/*console.log("10、startCommunication loading………… --------->");*/
+	console.log("10、startCommunication loading………… --------->");
 	setCallState(IN_CALL);
 	webRtcPeer.processAnswer(message.sdpAnswer, function(error) {
 		if (error)
 			return console.error(error);
 	});
-	/*console.log("11、startCommunication complete………… --------->");*/
+	console.log("11、startCommunication complete………… --------->");
 }
 
 function incomingCall(message) {
-	/*console.log("7、incomingCall loading………… --------->",message.to);*/
+	console.log("7、incomingCall loading………… --------->",message.to);
 	showSpinner(videoInput, videoOutput);
+
+	debugger
 	from = message.from;
 	var options = {
 		localVideo : videoInput,
@@ -279,11 +281,11 @@ function register(userId) {
 		name : userId
 	};
 	sendMessage(message);
-	/*console.log("1、registering lodaing………… --------- > ",userId)*/
+	console.log("1、registering lodaing………… --------- > ",userId)
 }
 
 function call() {
-	/*console.log("3、call loading………… --------->",param.userId);*/
+	console.log("3、call loading………… --------->",param.userId);
 	showSpinner(videoInput, videoOutput);
 	var options = {
 		localVideo : videoInput,
@@ -309,7 +311,7 @@ function call() {
 function onOfferCall(error, offerSdp) {
 	if (error)
 		return console.error('Error generating the offer');
-/*	console.log('Invoking SDP offer callback function');*/
+	console.log('Invoking SDP offer callback function');
 
 	var message = {
 		id : 'call',
@@ -319,7 +321,7 @@ function onOfferCall(error, offerSdp) {
 		sdpOffer : offerSdp
 	};
 	sendMessage(message);
-	/*console.log("4、onOfferCall offerSdp ………… --------- >");*/
+	console.log("4、onOfferCall offerSdp ………… --------- >");
 }
 
 function incomingCallError() {
@@ -355,7 +357,7 @@ function onError() {
 }
 
 function onIceCandidate(candidate) {
-	/*console.log("5、onIceCandidate loading………… --------- >" + JSON.stringify(candidate));*/
+	console.log("5、onIceCandidate loading………… --------- >" + JSON.stringify(candidate));
 
 	var message = {
 		id : 'onIceCandidate',
@@ -364,7 +366,7 @@ function onIceCandidate(candidate) {
 	// 把本地candidate发送给Peer，基于Trickle ICE，也就是说，一旦发现一个候选，就立即发送
 	// 不等待所有候选收集成功，这样效率更高。此回调可能被调用多次
 	sendMessage(message);
-	/*console.log("6、onIceCandidate loading………… --------- >" + JSON.stringify(candidate));*/
+	console.log("6、onIceCandidate loading………… --------- >" + JSON.stringify(candidate));
 }
 
 /**
@@ -408,7 +410,6 @@ function sendMessage(message) {
 }
 
 function showSpinner() {
-	debugger
 	for (var i = 0; i < arguments.length; i++) {
 		if(arguments[i].id === 'videoInput'){
 			arguments[i].poster = './img/transparent-1px.png';

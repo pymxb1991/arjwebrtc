@@ -195,19 +195,22 @@ public class GroupUserSession implements Closeable {
     final WebRtcEndpoint incoming = incomingMedia.remove(senderName);
 
     log.debug("PARTICIPANT {}: removing endpoint for {}", this.name, senderName);
-    incoming.release(new Continuation<Void>() {
-      @Override
-      public void onSuccess(Void result) throws Exception {
-        log.trace("PARTICIPANT {}: Released successfully incoming EP for {}",
-            GroupUserSession.this.name, senderName);
-      }
+    if(incoming != null){
+      incoming.release(new Continuation<Void>() {
+        @Override
+        public void onSuccess(Void result) throws Exception {
+          log.trace("PARTICIPANT {}: Released successfully incoming EP for {}",
+                  GroupUserSession.this.name, senderName);
+        }
 
-      @Override
-      public void onError(Throwable cause) throws Exception {
-        log.warn("PARTICIPANT {}: Could not release incoming EP for {}", GroupUserSession.this.name,
-            senderName);
-      }
-    });
+        @Override
+        public void onError(Throwable cause) throws Exception {
+          log.warn("PARTICIPANT {}: Could not release incoming EP for {}", GroupUserSession.this.name,
+                  senderName);
+        }
+      });
+    }
+
   }
 
   @Override
