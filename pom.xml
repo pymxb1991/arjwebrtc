@@ -122,7 +122,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.1.41</version>
+            <version>1.2.83</version>
         </dependency>
         <!-- WebJars  以 jar 包的方式引入静态资源 -->
         <!-- WebJars  webjars-locator  版本号统一管理 依赖引入-->
